@@ -1,0 +1,12 @@
+package ke.pcea.connect.modules.bible.api.dto
+data class BibleBookResponse(val id: String, val name: String, val testament: String)
+data class BibleVerseResponse(val id: String, val bookId: String, val chapter: Int, val verse: Int, val text: String, val translation: String, val audioUrl: String = "")
+data class BibleBookmarkRequest(val bookId: String, val chapter: Int, val verse: Int, val label: String = "")
+data class BibleBookmarkResponse(val id: String, val bookId: String, val chapter: Int, val verse: Int, val label: String)
+data class BibleHighlightRequest(val verseId: String, val color: String = "#FFEB3B")
+data class BibleHighlightResponse(val id: String, val verseId: String, val color: String)
+data class BibleNoteRequest(val verseId: String, val content: String)
+data class BibleNoteResponse(val id: String, val verseId: String, val content: String, val createdAt: String)
+data class BiblePlanResponse(val id: String, val name: String, val description: String, val days: Int)
+data class BibleProgressResponse(val planId: String, val currentDay: Int, val completed: Boolean)
+data class BibleDevotionalResponse(val title: String, val verseRef: String, val content: String, val author: String, val date: String)
