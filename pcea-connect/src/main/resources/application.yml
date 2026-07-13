@@ -3,7 +3,7 @@ spring:
     url: jdbc:postgresql://localhost:5433/pcea
     driver-class-name: org.postgresql.Driver
     username: pcea
-    password: pcea123
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
@@ -13,7 +13,7 @@ spring:
         format_sql: true
 
 jwt:
-  secret: my-very-long-secret-key-that-is-256-bits-long!!
+  secret: ${JWT_SECRET}
   expiration-ms: 86400000
   refresh-expiration-ms: 604800000
 

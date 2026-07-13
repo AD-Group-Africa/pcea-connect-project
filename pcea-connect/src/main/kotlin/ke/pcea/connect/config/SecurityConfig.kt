@@ -22,7 +22,7 @@ class SecurityConfig(private val jwtAuthFilter: JwtAuthFilter) {
             .csrf { it.disable() }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests {
-                it.requestMatchers("/api/**", "/h2-console/**").permitAll()
+                it.requestMatchers("/api/auth/**", "/api/locator/**", "/api/health", "/h2-console/**").permitAll()
                 it.anyRequest().authenticated()
             }
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
@@ -33,7 +33,10 @@ class SecurityConfig(private val jwtAuthFilter: JwtAuthFilter) {
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
-        configuration.allowedOrigins = listOf("http://localhost:3000", "http://localhost:3001", "http://localhost:3002")
+        configuration.allowedOrigins = listOf(
+            "http://localhost:3000", "http://localhost:3001", "http://localhost:3002",
+            "http://192.168.1.23:3000"   // phone access
+        )
         configuration.allowedMethods = listOf("*")
         configuration.allowedHeaders = listOf("*")
         configuration.allowCredentials = true
