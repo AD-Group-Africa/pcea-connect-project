@@ -1,0 +1,13 @@
+ALTER TABLE member_profiles ADD COLUMN IF NOT EXISTS spouse_name VARCHAR(255);
+ALTER TABLE member_profiles ADD COLUMN IF NOT EXISTS father_name VARCHAR(255);
+ALTER TABLE member_profiles ADD COLUMN IF NOT EXISTS mother_name VARCHAR(255);
+ALTER TABLE member_profiles ADD COLUMN IF NOT EXISTS emergency_contact VARCHAR(255);
+ALTER TABLE member_profiles ADD COLUMN IF NOT EXISTS emergency_phone VARCHAR(50);
+ALTER TABLE member_profiles ADD COLUMN IF NOT EXISTS address TEXT;
+ALTER TABLE member_profiles ADD COLUMN IF NOT EXISTS city VARCHAR(255);
+ALTER TABLE member_profiles ADD COLUMN IF NOT EXISTS postal_code VARCHAR(20);
+ALTER TABLE member_profiles ADD COLUMN IF NOT EXISTS country VARCHAR(100) DEFAULT 'Kenya';
+ALTER TABLE member_profiles ADD COLUMN IF NOT EXISTS confirmation_date DATE;
+ALTER TABLE member_profiles ADD COLUMN IF NOT EXISTS marriage_date DATE;
+ALTER TABLE member_profiles ADD COLUMN IF NOT EXISTS active BOOLEAN DEFAULT TRUE;
+ALTER TABLE member_profiles ADD COLUMN IF NOT EXISTS member_status VARCHAR(50) DEFAULT 'ACTIVE';
