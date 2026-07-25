@@ -5,8 +5,7 @@ import java.time.LocalDateTime
 enum class AnnouncementType { CIRCULAR, EVENT, EMERGENCY, GENERAL }
 enum class NotificationChannel { PUSH, EMAIL, SMS, IN_APP }
 
-@Entity
-@Table(name = "announcements")
+@Entity @Table(name = "announcements")
 data class Announcement(
     @Id @GeneratedValue(strategy = GenerationType.UUID) val id: String = "",
     val title: String = "",
@@ -18,14 +17,21 @@ data class Announcement(
     val expiresAt: LocalDateTime? = null
 )
 
-@Entity
-@Table(name = "notifications")
-data class Notification(
+@Entity @Table(name = "prayer_feed")
+data class PrayerFeedItem(
     @Id @GeneratedValue(strategy = GenerationType.UUID) val id: String = "",
-    val recipientId: String = "",
+    val userId: String = "",
+    val request: String = "",
+    val isAnonymous: Boolean = false,
+    var prayerCount: Int = 0,
+    val createdAt: LocalDateTime = LocalDateTime.now()
+)
+
+@Entity @Table(name = "notification_templates")
+data class NotificationTemplate(
+    @Id @GeneratedValue(strategy = GenerationType.UUID) val id: String = "",
+    val name: String = "",
     val title: String = "",
     val body: String = "",
-    @Enumerated(EnumType.STRING) val channel: NotificationChannel = NotificationChannel.IN_APP,
-    var read: Boolean = false,   // <-- changed to var
-    val createdAt: LocalDateTime = LocalDateTime.now()
+    @Enumerated(EnumType.STRING) val channel: NotificationChannel = NotificationChannel.PUSH
 )

@@ -1,7 +1,6 @@
 package ke.pcea.connect.modules.communication.api.controller
 import ke.pcea.connect.modules.communication.api.dto.*
 import ke.pcea.connect.modules.communication.application.CommunicationService
-import ke.pcea.connect.modules.communication.domain.NotificationChannel
 import ke.pcea.connect.shared.api.ApiResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -11,35 +10,44 @@ import org.springframework.web.bind.annotation.*
 class CommunicationController(private val service: CommunicationService) {
 
     @PostMapping("/announcements")
-    fun createAnnouncement(@RequestBody req: CreateAnnouncementRequest): ResponseEntity<ApiResponse<AnnouncementResponse>> {
+    fun createAnnouncement(@RequestBody req: AnnouncementRequest): ResponseEntity<ApiResponse<AnnouncementResponse>> {
         val ann = service.createAnnouncement(req.title, req.content, req.type, req.senderId, req.targetScope)
-        return ResponseEntity.ok(ApiResponse.success(AnnouncementResponse(ann.id, ann.title, ann.content, ann.type.name, ann.senderId, ann.publishedAt.toString())))
+        return ResponseEntity.ok(ApiResponse.success(AnnouncementResponse(ann.id, ann.title, ann.content, ann.type.name, ann.publishedAt.toString())))
     }
 
     @GetMapping("/announcements")
     fun getAnnouncements(@RequestParam(required = false) scopes: String?): ResponseEntity<ApiResponse<List<AnnouncementResponse>>> {
         val list = if (scopes.isNullOrBlank()) service.getAllAnnouncements()
-                    else service.getAnnouncementsForUser("", scopes.split(","))
-        val resp = list.map { AnnouncementResponse(it.id, it.title, it.content, it.type.name, it.senderId, it.publishedAt.toString()) }
-        return ResponseEntity.ok(ApiResponse.success(resp))
+                    else service.getAnnouncementsForUser(scopes.split(","))
+        return ResponseEntity.ok(ApiResponse.success(list.map { AnnouncementResponse(it.id, it.title, it.content, it.type.name, it.publishedAt.toString()) }))
     }
 
-    @PostMapping("/notifications")
-    fun sendNotification(@RequestBody req: SendNotificationRequest): ResponseEntity<ApiResponse<NotificationResponse>> {
-        val notif = service.sendNotification(req.recipientId, req.title, req.body, req.channel)
-        return ResponseEntity.ok(ApiResponse.success(NotificationResponse(notif.id, notif.title, notif.body, notif.channel.name, notif.read, notif.createdAt.toString())))
+    @PostMapping("/prayer")
+    fun postPrayer(@RequestBody req: PrayerRequest): ResponseEntity<ApiResponse<PrayerFeedResponse>> {
+        val item = service.postPrayer(req.userId, req.request, req.isAnonymous)
+        return ResponseEntity.ok(ApiResponse.success(PrayerFeedResponse(item.id, item.userId, item.request, item.prayerCount, item.createdAt.toString())))
     }
 
-    @GetMapping("/notifications/{userId}")
-    fun getNotifications(@PathVariable userId: String, @RequestParam(required = false) unreadOnly: Boolean?): ResponseEntity<ApiResponse<List<NotificationResponse>>> {
-        val list = if (unreadOnly == true) service.getUnreadNotifications(userId) else service.getAllNotifications(userId)
-        val resp = list.map { NotificationResponse(it.id, it.title, it.body, it.channel.name, it.read, it.createdAt.toString()) }
-        return ResponseEntity.ok(ApiResponse.success(resp))
+    @PostMapping("/prayer/{id}/pray")
+    fun prayForItem(@PathVariable id: String): ResponseEntity<ApiResponse<PrayerFeedResponse>> {
+        val item = service.prayForItem(id)
+        return ResponseEntity.ok(ApiResponse.success(PrayerFeedResponse(item.id, item.userId, item.request, item.prayerCount, item.createdAt.toString())))
     }
 
-    @PutMapping("/notifications/{notificationId}/read")
-    fun markAsRead(@PathVariable notificationId: String): ResponseEntity<ApiResponse<String>> {
-        service.markAsRead(notificationId)
-        return ResponseEntity.ok(ApiResponse.success("marked read"))
+    @GetMapping("/prayer")
+    fun getPrayerFeed(): ResponseEntity<ApiResponse<List<PrayerFeedResponse>>> {
+        return ResponseEntity.ok(ApiResponse.success(service.getPrayerFeed().map {
+            PrayerFeedResponse(it.id, it.userId, it.request, it.prayerCount, it.createdAt.toString()) }))
+    }
+
+    @PostMapping("/templates")
+    fun createTemplate(@RequestBody req: TemplateRequest): ResponseEntity<ApiResponse<TemplateResponse>> {
+        val t = service.createTemplate(req.name, req.title, req.body, req.channel)
+        return ResponseEntity.ok(ApiResponse.success(TemplateResponse(t.id, t.name, t.title, t.body, t.channel.name)))
+    }
+
+    @GetMapping("/templates")
+    fun getTemplates(): ResponseEntity<ApiResponse<List<TemplateResponse>>> {
+        return ResponseEntity.ok(ApiResponse.success(service.getTemplates().map { TemplateResponse(it.id, it.name, it.title, it.body, it.channel.name) }))
     }
 }

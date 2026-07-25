@@ -1,0 +1,17 @@
+# src/main/resources/application-demo.yml
+
+spring:
+  security:
+    user:
+      name: demo
+      password: demo
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+
+jwt:
+  secret: "demo-mode-not-used"
+
+app:
+  demo-mode: true

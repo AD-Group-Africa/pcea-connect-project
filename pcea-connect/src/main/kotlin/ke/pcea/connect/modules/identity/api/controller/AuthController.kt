@@ -23,3 +23,16 @@ class AuthController(private val authService: AuthService) {
         return ResponseEntity.ok(ApiResponse.success(AuthResponse(newAccess, req.refreshToken, "", "")))
     }
 }
+@RestController
+@RequestMapping("/api/auth")
+class LogoutController(
+    private val refreshTokenRepo: ke.pcea.connect.modules.identity.infrastructure.RefreshTokenRepository
+) {
+    @PostMapping("/logout")
+    fun logout(@RequestHeader("Authorization") bearer: String): ResponseEntity<ApiResponse<String>> {
+        val token = bearer.removePrefix("Bearer ")
+        refreshTokenRepo.findByToken(token)?.let { refreshTokenRepo.delete(it) }
+        return ResponseEntity.ok(ApiResponse.success("Logged out"))
+    }
+}
+

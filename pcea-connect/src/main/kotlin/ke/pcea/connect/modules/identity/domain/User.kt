@@ -7,7 +7,7 @@ import ke.pcea.connect.modules.church.domain.Congregation
 data class User(
     @Id @GeneratedValue(strategy = GenerationType.UUID) val id: String = "",
     @Column(unique = true) val email: String = "",
-    val password: String = "",
+    var password: String = "",
     val fullName: String = "",
     val phone: String = "",
     val enabled: Boolean = true,

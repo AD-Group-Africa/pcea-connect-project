@@ -2,6 +2,7 @@ package ke.pcea.connect.modules.volunteer.api.controller
 import ke.pcea.connect.modules.volunteer.application.VolunteerService
 import ke.pcea.connect.shared.api.ApiResponse
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 
@@ -9,6 +10,7 @@ import java.time.LocalDateTime
 @RequestMapping("/api/volunteer")
 class VolunteerController(private val service: VolunteerService) {
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN', 'ELDER')")
     @PostMapping("/teams")
     fun createTeam(@RequestBody req: Map<String, String>): ResponseEntity<ApiResponse<Map<String, Any?>>> {
         val team = service.createTeam(req["name"] ?: "", req["description"] ?: "", req["congregationId"] ?: "")

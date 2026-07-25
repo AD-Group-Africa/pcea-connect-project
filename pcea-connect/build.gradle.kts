@@ -9,6 +9,8 @@ group = "ke.pcea"
 version = "0.0.1-SNAPSHOT"
 repositories { mavenCentral() }
 dependencies {
+    runtimeOnly("com.h2database:h2")
+    implementation("com.twilio.sdk:twilio:10.1.0")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -22,4 +24,5 @@ dependencies {
 }
 kotlin { compilerOptions { freeCompilerArgs.add("-Xjsr305=strict") } }
 tasks.withType<Test> { useJUnitPlatform() }
+
 

@@ -9,15 +9,14 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class CommunicationService(
     private val announcementRepo: AnnouncementRepository,
-    private val notificationRepo: NotificationRepository
+    private val prayerFeedRepo: PrayerFeedRepository,
+    private val templateRepo: NotificationTemplateRepository
 ) {
     fun createAnnouncement(title: String, content: String, type: AnnouncementType, senderId: String, targetScope: String): Announcement {
-        val ann = Announcement(title = title, content = content, type = type, senderId = senderId, targetScope = targetScope)
-        return announcementRepo.save(ann)
+        return announcementRepo.save(Announcement(title = title, content = content, type = type, senderId = senderId, targetScope = targetScope))
     }
 
-    fun getAnnouncementsForUser(userId: String, userScopes: List<String>): List<Announcement> {
-        // userScopes could include congregation ID, parish ID, etc.
+    fun getAnnouncementsForUser(userScopes: List<String>): List<Announcement> {
         return announcementRepo.findAll().filter { ann ->
             userScopes.any { scope -> ann.targetScope.contains(scope) } || ann.targetScope == "all"
         }
@@ -25,18 +24,21 @@ class CommunicationService(
 
     fun getAllAnnouncements() = announcementRepo.findAll()
 
-    fun sendNotification(recipientId: String, title: String, body: String, channel: NotificationChannel): Notification {
-        val notif = Notification(recipientId = recipientId, title = title, body = body, channel = channel)
-        // TODO: integrate FCM, email, SMS gateway here
-        return notificationRepo.save(notif)
+    fun postPrayer(userId: String, request: String, isAnonymous: Boolean): PrayerFeedItem {
+        return prayerFeedRepo.save(PrayerFeedItem(userId = userId, request = request, isAnonymous = isAnonymous))
     }
 
-    fun getUnreadNotifications(userId: String) = notificationRepo.findByRecipientIdAndReadFalse(userId)
-    fun getAllNotifications(userId: String) = notificationRepo.findByRecipientId(userId)
-
-    fun markAsRead(notificationId: String) {
-        val notif = notificationRepo.findById(notificationId).orElseThrow { BusinessRuleException("Notification not found") }
-        notif.read = true
-        notificationRepo.save(notif)
+    fun prayForItem(itemId: String): PrayerFeedItem {
+        val item = prayerFeedRepo.findById(itemId).orElseThrow { BusinessRuleException("Prayer not found") }
+        item.prayerCount += 1
+        return prayerFeedRepo.save(item)
     }
+
+    fun getPrayerFeed() = prayerFeedRepo.findAllByOrderByCreatedAtDesc()
+
+    fun createTemplate(name: String, title: String, body: String, channel: NotificationChannel): NotificationTemplate {
+        return templateRepo.save(NotificationTemplate(name = name, title = title, body = body, channel = channel))
+    }
+
+    fun getTemplates() = templateRepo.findAll()
 }

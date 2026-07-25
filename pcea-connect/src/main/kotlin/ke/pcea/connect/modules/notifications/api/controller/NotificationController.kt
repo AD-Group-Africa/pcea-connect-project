@@ -3,6 +3,7 @@ import ke.pcea.connect.modules.notifications.api.dto.*
 import ke.pcea.connect.modules.notifications.application.NotificationEngine
 import ke.pcea.connect.shared.api.ApiResponse
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
@@ -15,6 +16,7 @@ class NotificationController(private val engine: NotificationEngine) {
     fun registerDevice(auth: Authentication, @RequestBody req: RegisterDeviceRequest) =
         ResponseEntity.ok(ApiResponse.success(engine.registerDevice(auth.name, req.token, req.platform).let { "Device registered" }))
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN', 'ELDER')")
     @PostMapping("/send")
     fun send(@RequestBody req: SendNotificationRequest): ResponseEntity<ApiResponse<String>> {
         when (req.channel) {
@@ -26,6 +28,7 @@ class NotificationController(private val engine: NotificationEngine) {
         return ResponseEntity.ok(ApiResponse.success("Notification sent"))
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN', 'ELDER')")
     @PostMapping("/schedule")
     fun schedule(@RequestBody req: SendNotificationRequest): ResponseEntity<ApiResponse<String>> {
         val scheduledAt = if (req.scheduledAt != null) LocalDateTime.parse(req.scheduledAt) else LocalDateTime.now()

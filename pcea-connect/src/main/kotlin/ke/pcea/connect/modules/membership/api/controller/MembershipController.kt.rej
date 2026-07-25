@@ -1,0 +1,9 @@
+diff a/pcea-connect/src/main/kotlin/ke/pcea/connect/modules/membership/api/controller/MembershipController.kt b/pcea-connect/src/main/kotlin/ke/pcea/connect/modules/membership/api/controller/MembershipController.kt	(rejected hunks)
+@@ -34,6 +35,7 @@
+         return ResponseEntity.ok(ApiResponse.success(response))
+     }
+ 
++    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN', 'CLERK')")
+     @PostMapping("/{userId}/assign-congregation")
+     fun assignCongregation(@PathVariable userId: String, @RequestBody req: AssignCongregationRequest): ResponseEntity<ApiResponse<MemberResponse>> {
+         val user = membershipService.assignCongregation(userId, req.congregationId)

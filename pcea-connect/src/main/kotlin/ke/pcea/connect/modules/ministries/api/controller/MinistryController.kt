@@ -3,6 +3,7 @@ import ke.pcea.connect.modules.ministries.api.dto.*
 import ke.pcea.connect.modules.ministries.application.MinistryService
 import ke.pcea.connect.shared.api.ApiResponse
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 
@@ -15,6 +16,7 @@ class MinistryController(private val service: MinistryService) {
         MinistryResponse(it.id, it.name, it.type.name, it.description, it.congregationId)
     }))
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN', 'ELDER')")
     @PostMapping
     fun create(@RequestBody req: CreateMinistryRequest) = ResponseEntity.ok(ApiResponse.success(
         service.createMinistry(req.name, req.type, req.description, req.congregationId).let {

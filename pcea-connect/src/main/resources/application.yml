@@ -22,4 +22,13 @@ mpesa:
   consumer-secret: ${MPESA_CONSUMER_SECRET:your_consumer_secret}
   passkey: ${MPESA_PASSKEY:your_passkey}
   shortcode: ${MPESA_SHORTCODE:174379}
-  callback-url: ${MPESA_CALLBACK_URL:https://yourdomain.com/api/giving/mpesa-callback}
+  callback-secret: ${MPESA_CALLBACK_SECRET:CHANGE_ME_dev_only_9f3a7c}
+  callback-url: ${MPESA_CALLBACK_URL:https://yourdomain.com/api/giving/mpesa-callback/CHANGE_ME_dev_only_9f3a7c}
+africastalking:
+  api-key: ${AT_API_KEY:sandbox}
+  username: ${AT_USERNAME:sandbox}
+
+twilio:
+  account-sid: ${TWILIO_ACCOUNT_SID:}
+  auth-token: ${TWILIO_AUTH_TOKEN:}
+  whatsapp-number: ${TWILIO_WHATSAPP_NUMBER:whatsapp:+14155238886}

@@ -12,11 +12,9 @@ class GivingController(
     private val service: GivingService,
     private val mpesaService: MpesaDarajaService
 ) {
-
     @PostMapping("/contribute")
     fun contribute(@RequestBody req: ContributionRequest): ResponseEntity<ApiResponse<ContributionResponse>> {
         val c = service.recordContribution(req.userId, req.type, req.amount, req.method, req.phoneNumber, req.description, req.congregationId)
-        // Only try STK push if consumer key is configured (not "your_consumer_key")
         if (req.method.name == "MPESA" && req.phoneNumber.isNotBlank()) {
             try {
                 val stkResponse = mpesaService.stkPush(req.phoneNumber, req.amount, c.id, req.description)
@@ -24,9 +22,7 @@ class GivingController(
                     c.transactionRef = stkResponse.CheckoutRequestID
                     service.updateContribution(c)
                 }
-            } catch (e: Exception) {
-                // STK push failed – contribution still saved as PENDING
-            }
+            } catch (e: Exception) { /* STK push failed – contribution still saved as PENDING */ }
         }
         return ResponseEntity.ok(ApiResponse.success(ContributionResponse(c.id, c.userId, c.type.name, c.amount, c.method.name, c.status.name, c.transactionRef, c.createdAt.toString())))
     }

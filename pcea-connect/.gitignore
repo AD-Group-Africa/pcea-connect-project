@@ -1,29 +1,8 @@
-# Java / Gradle
+ï»¿node_modules/
+.next/
 build/
 .gradle/
-bin/
-out/
-
-# Frontend (Next.js)
-frontend/.next/
-frontend/node_modules/
-frontend/.env.local
-
-# Mobile (Flutter)
-mobile/.dart_tool/
-mobile/build/
-mobile/.packages
-mobile/.flutter-plugins
-mobile/.flutter-plugins-dependencies
-
-# IDE
-.idea/
-.vscode/
-*.iml
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Docker / env (optional – keep .env.example, not real secrets)
+*.log
 .env
+.env.local
+application-local.yml

@@ -29,4 +29,10 @@ class JwtService(
     fun getUserIdFromToken(token: String): String {
         return Jwts.parser().verifyWith(signingKey).build().parseSignedClaims(token).payload.subject
     }
+
+    @Suppress("UNCHECKED_CAST")
+    fun getRolesFromToken(token: String): List<String> {
+        val claims = Jwts.parser().verifyWith(signingKey).build().parseSignedClaims(token).payload
+        return (claims["roles"] as? List<*>)?.mapNotNull { it as? String } ?: emptyList()
+    }
 }

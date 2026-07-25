@@ -1,0 +1,17 @@
+diff a/pcea-connect/src/main/kotlin/ke/pcea/connect/modules/analytics/api/controller/AnalyticsController.kt b/pcea-connect/src/main/kotlin/ke/pcea/connect/modules/analytics/api/controller/AnalyticsController.kt	(rejected hunks)
+@@ -2,6 +2,7 @@
+ import ke.pcea.connect.modules.analytics.application.AnalyticsService
+ import ke.pcea.connect.shared.api.ApiResponse
+ import org.springframework.http.ResponseEntity
++import org.springframework.security.access.prepost.PreAuthorize
+ import org.springframework.web.bind.annotation.*
+ 
+ @RestController
+@@ -20,6 +21,7 @@
+     @GetMapping("/region/{regionId}")
+     fun regionMetrics(@PathVariable regionId: String) = ResponseEntity.ok(ApiResponse.success(service.getRegionMetrics(regionId)))
+ 
++    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+     @GetMapping("/national")
+     fun nationalMetrics() = ResponseEntity.ok(ApiResponse.success(service.getNationalMetrics()))
+ }

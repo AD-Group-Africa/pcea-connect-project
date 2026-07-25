@@ -3,6 +3,7 @@ import ke.pcea.connect.modules.church.application.ChurchStructureService
 import ke.pcea.connect.modules.church.domain.*
 import ke.pcea.connect.shared.api.ApiResponse
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 data class CreateRegionRequest(val name: String, val address: String = "", val phone: String = "", val email: String = "")
@@ -17,6 +18,7 @@ class ChurchStructureController(private val service: ChurchStructureService) {
     @GetMapping("/regions")
     fun getRegions() = ResponseEntity.ok(ApiResponse.success(service.getAllRegions()))
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @PostMapping("/regions")
     fun createRegion(@RequestBody req: CreateRegionRequest) =
         ResponseEntity.ok(ApiResponse.success(service.createRegion(Region(name = req.name, address = req.address, phone = req.phone, email = req.email))))
@@ -24,6 +26,7 @@ class ChurchStructureController(private val service: ChurchStructureService) {
     @GetMapping("/presbyteries")
     fun getPresbyteries(@RequestParam regionId: String) = ResponseEntity.ok(ApiResponse.success(service.getPresbyteriesByRegion(regionId)))
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @PostMapping("/presbyteries")
     fun createPresbytery(@RequestBody req: CreatePresbyteryRequest) =
         ResponseEntity.ok(ApiResponse.success(service.createPresbytery(req.name, req.regionId)))
@@ -31,6 +34,7 @@ class ChurchStructureController(private val service: ChurchStructureService) {
     @GetMapping("/parishes")
     fun getParishes(@RequestParam presbyteryId: String) = ResponseEntity.ok(ApiResponse.success(service.getParishesByPresbytery(presbyteryId)))
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @PostMapping("/parishes")
     fun createParish(@RequestBody req: CreateParishRequest) =
         ResponseEntity.ok(ApiResponse.success(service.createParish(req.name, req.presbyteryId)))
@@ -38,6 +42,7 @@ class ChurchStructureController(private val service: ChurchStructureService) {
     @GetMapping("/congregations")
     fun getCongregations(@RequestParam parishId: String) = ResponseEntity.ok(ApiResponse.success(service.getCongregationsByParish(parishId)))
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @PostMapping("/congregations")
     fun createCongregation(@RequestBody req: CreateCongregationRequest) =
         ResponseEntity.ok(ApiResponse.success(service.createCongregation(req.name, req.parishId)))
