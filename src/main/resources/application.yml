@@ -4,6 +4,14 @@ spring:
     driver-class-name: org.postgresql.Driver
     username: pcea
     password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 20        # Tune based on expected concurrent requests
+      minimum-idle: 5              # Keep 5 idle connections warm
+      connection-timeout: 10000    # Fail fast if no connection available
+      idle-timeout: 600000         # Close idle conn after 10 min
+      max-lifetime: 1800000        # Close all connections after 30 min
+      connection-test-query: SELECT 1
+      leak-detection-threshold: 60000  # Warn if connection held > 60s
   jpa:
     hibernate:
       ddl-auto: validate
@@ -11,12 +19,23 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  # Flyway owns the schema. Legacy databases created by Hibernate (no schema history) are
-  # baselined at V043 and only receive V044+; fresh databases receive the full V015+ chain.
   flyway:
     enabled: true
     baseline-on-migrate: true
     baseline-version: 43
+  redis:
+    host: ${SPRING_REDIS_HOST:localhost}
+    port: 6379
+    timeout: 2000ms
+    jedis:
+      pool:
+        max-active: 10
+        max-idle: 5
+        min-idle: 2
+  cache:
+    type: redis
+    redis:
+      time-to-live: 3600000  # Default 1 hour
 
 jwt:
   secret: ${JWT_SECRET}
@@ -30,20 +49,25 @@ mpesa:
   shortcode: ${MPESA_SHORTCODE:174379}
   callback-secret: ${MPESA_CALLBACK_SECRET:CHANGE_ME_dev_only_9f3a7c}
   callback-url: ${MPESA_CALLBACK_URL:https://yourdomain.com/api/giving/mpesa-callback/CHANGE_ME_dev_only_9f3a7c}
-africastalking:
+  timeout-seconds: 10  # External API timeout
+
+africstalking:
   api-key: ${AT_API_KEY:sandbox}
   username: ${AT_USERNAME:sandbox}
+  timeout-seconds: 8
 
 twilio:
   account-sid: ${TWILIO_ACCOUNT_SID:}
   auth-token: ${TWILIO_AUTH_TOKEN:}
   whatsapp-number: ${TWILIO_WHATSAPP_NUMBER:whatsapp:+14155238886}
+  timeout-seconds: 10
 
 smtp:
   host: ${SMTP_HOST:}
   port: ${SMTP_PORT:587}
   username: ${SMTP_USERNAME:}
   password: ${SMTP_PASSWORD:}
+  timeout-seconds: 5
 
 google:
   client-id: ${GOOGLE_CLIENT_ID:}
