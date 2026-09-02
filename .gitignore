@@ -1,0 +1,13 @@
+﻿node_modules/
+.next/
+build/
+.gradle/
+*.log
+.env
+.env.local
+application-local.yml
+
+.idea/
+.freebuff/
+.env.production
+lib/

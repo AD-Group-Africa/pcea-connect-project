@@ -1,0 +1,41 @@
+security:
+  rate-limit:
+    enabled: false
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:pceatest;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  flyway:
+    enabled: true
+    baseline-on-migrate: false
+  main:
+    allow-bean-definition-overriding: true
+
+jwt:
+  secret: test-secret-key-that-is-definitely-256-bits-long-1234
+  expiration-ms: 86400000
+  refresh-expiration-ms: 604800000
+
+mpesa:
+  consumer-key: test
+  consumer-secret: test
+  passkey: test
+  shortcode: 174379
+  callback-secret: unit-test-callback-secret
+  callback-url: http://localhost:8080/api/giving/mpesa-callback/unit-test-callback-secret
+
+africastalking:
+  api-key: sandbox
+  username: sandbox
+
+twilio:
+  account-sid: ""
+  auth-token: ""
+  whatsapp-number: "whatsapp:+14155238886"
