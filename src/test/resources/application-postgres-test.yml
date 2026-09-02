@@ -1,0 +1,31 @@
+spring:
+  datasource:
+    url: ${postgres.jdbc.url}
+    driver-class-name: org.postgresql.Driver
+    username: ${postgres.username}
+    password: ${postgres.password}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    enabled: true
+    baseline-on-migrate: false
+    locations: classpath:db/migration
+
+jwt:
+  secret: postgres-test-secret-key-that-is-256-bits-long-1234
+  expiration-ms: 86400000
+  refresh-expiration-ms: 604800000
+
+mpesa:
+  consumer-key: test
+  consumer-secret: test
+  passkey: test
+  shortcode: 174379
+  callback-secret: unit-test-callback-secret
+  callback-url: http://localhost:8080/api/giving/mpesa-callback/unit-test-callback-secret
+
+security:
+  rate-limit:
+    enabled: false

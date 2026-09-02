@@ -1,0 +1,65 @@
+package ke.pcea.connect.modules.identity.application
+import ke.pcea.connect.modules.identity.domain.RefreshToken
+import ke.pcea.connect.modules.identity.domain.User
+import ke.pcea.connect.modules.identity.infrastructure.RefreshTokenRepository
+import ke.pcea.connect.modules.identity.infrastructure.UserRepository
+import ke.pcea.connect.shared.api.BusinessRuleException
+import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
+
+@Service
+@Transactional
+class AuthService(
+    private val userRepo: UserRepository,
+    private val refreshTokenRepo: RefreshTokenRepository,
+    private val passwordEncoder: PasswordEncoder,
+    private val tokenService: TokenService,
+    private val emailVerificationService: EmailVerificationService
+) {
+    fun register(email: String, password: String, fullName: String, phone: String, termsAccepted: Boolean = false): User {
+        if (userRepo.findByEmail(email).isPresent) throw BusinessRuleException("Email already registered")
+        val roles = if (userRepo.count() == 0L) mutableSetOf("MEMBER", "SUPER_ADMIN") else mutableSetOf("MEMBER")
+        val user = User(
+            email = email,
+            password = passwordEncoder.encode(password),
+            fullName = fullName,
+            phone = phone,
+            roles = roles,
+            termsAcceptedAt = if (termsAccepted) java.time.LocalDateTime.now() else null
+        )
+        val saved = userRepo.save(user)
+        // Send verification email — in dev mode the link is returned, not emailed
+        emailVerificationService.sendVerificationEmail(saved.id, saved.email, saved.fullName)
+        return saved
+    }
+
+    fun login(email: String, password: String): LoginResult {
+        val user = userRepo.findByEmail(email)
+            .orElseThrow { BusinessRuleException("Invalid credentials") }
+        if (!passwordEncoder.matches(password, user.password))
+            throw BusinessRuleException("Invalid credentials")
+
+        val roles = user.roles.toList()
+        val accessToken = tokenService.createAccessToken(user.id, roles)
+        val refreshTokenStr = tokenService.createRefreshToken(user.id)
+
+        // Delete previous refresh tokens for this user and insert the new one
+        refreshTokenRepo.deleteByUserId(user.id)
+        val refreshToken = RefreshToken(token = refreshTokenStr, userId = user.id, expiryDate = Instant.now().plusSeconds(604800))
+        refreshTokenRepo.save(refreshToken)
+
+        return LoginResult(accessToken, refreshTokenStr, user.id, user.fullName)
+    }
+
+    fun refreshAccessToken(refreshToken: String): String {
+        val stored = refreshTokenRepo.findByToken(refreshToken)
+            ?: throw BusinessRuleException("Invalid refresh token")
+        if (stored.expiryDate.isBefore(Instant.now()))
+            throw BusinessRuleException("Refresh token expired")
+        val user = userRepo.findById(stored.userId).orElseThrow { BusinessRuleException("User not found") }
+        return tokenService.createAccessToken(user.id, user.roles.toList())
+    }
+}
+data class LoginResult(val accessToken: String, val refreshToken: String, val userId: String, val fullName: String)
