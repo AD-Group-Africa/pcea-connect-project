@@ -81,7 +81,7 @@ export function MinistryEvents({ theme, events }: { theme: MinistryTheme; events
       </h2>
       <div className="grid gap-4 md:grid-cols-2">
         {events.map(e => (
-          <Card key={e.id} className="bg-[#1E293B] border-0 shadow-lg">
+          <Card key={e.id} className="bg-card border-0 shadow-lg">
             <CardHeader>
               <CardTitle className="text-lg text-white">{e.title}</CardTitle>
               {e.location && <p className="text-sm text-gray-400 flex items-center gap-1"><MapPin className="h-3 w-3" /> {e.location}</p>}
@@ -114,7 +114,7 @@ export function MinistryAnnouncements({ theme, announcements }: { theme: Ministr
       </h2>
       <div className="space-y-2">
         {announcements.map(a => (
-          <Card key={a.id} className="bg-[#1E293B] border-0 shadow-lg">
+          <Card key={a.id} className="bg-card border-0 shadow-lg">
             <CardContent className="p-4">
               <div className="flex items-center gap-2 mb-1">
                 {a.pinned && <Badge style={{ background: theme.accent, color: "white" }}>Pinned</Badge>}
@@ -145,7 +145,7 @@ export function MinistryProjects({ theme, projects }: { theme: MinistryTheme; pr
       </h2>
       <div className="space-y-2">
         {projects.map(p => (
-          <Card key={p.id} className="bg-[#1E293B] border-0 shadow-lg">
+          <Card key={p.id} className="bg-card border-0 shadow-lg">
             <CardContent className="p-4 flex items-center justify-between">
               <div>
                 <p className="font-medium text-white">{p.name}</p>
@@ -164,7 +164,7 @@ export function MinistryProjects({ theme, projects }: { theme: MinistryTheme; pr
 
 export function MinistryEmptyState({ theme, message }: { theme: MinistryTheme; message: string }) {
   return (
-    <Card className="bg-[#1E293B] border-0 shadow-lg">
+    <Card className="bg-card border-0 shadow-lg">
       <CardContent className="p-8 text-center">
         <Users className="h-12 w-12 mx-auto mb-2 text-gray-600" />
         <p className="text-gray-400">{message}</p>

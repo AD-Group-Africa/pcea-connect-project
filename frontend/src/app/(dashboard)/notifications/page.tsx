@@ -1,12 +1,13 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
-import api from "@/lib/api"
+import api, { apiErrorMessage } from "@/lib/api"
 import { getUserId } from "@/lib/auth"
-import { Bell, CheckCircle, MailOpen, Inbox } from "lucide-react"
+import { Bell, CheckCircle2, MailOpen, Inbox } from "lucide-react"
+import { toast } from "sonner"
 
 interface NotificationItem {
   id: string
@@ -20,38 +21,50 @@ interface NotificationItem {
 export default function NotificationsPage() {
   const [items, setItems] = useState<NotificationItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [userId, setUserId] = useState<string | null>(null)
   const [filter, setFilter] = useState<"all" | "unread">("all")
-  const userId = getUserId()
 
-  const load = async () => {
-    if (!userId) { setLoading(false); return }
+  const load = useCallback(async (uid: string, f: "all" | "unread") => {
     try {
-      const endpoint = filter === "unread"
+      const endpoint = f === "unread"
         ? "/api/notifications/me/unread"
         : "/api/notifications/me/inbox"
       const res = await api.get(endpoint)
       setItems(res.data.data || [])
-    } catch (e) { console.error(e) }
-    finally { setLoading(false) }
-  }
+    } catch {
+      setItems([])
+    } finally {
+      setLoading(false)
+    }
+  }, [])
 
-  useEffect(() => { load() }, [userId, filter])
+  useEffect(() => {
+    const uid = getUserId()
+    setUserId(uid)
+    if (uid) load(uid, filter)
+    else setLoading(false)
+  }, [filter, load])
 
   const markRead = async (id: string) => {
     try {
       await api.post(`/api/notifications/me/${id}/read`)
       setItems(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n))
-    } catch (e) { console.error(e) }
+    } catch (e) {
+      toast.error(apiErrorMessage(e, "Could not update this notification"))
+    }
   }
 
   const markAllRead = async () => {
     try {
       await api.post("/api/notifications/me/read-all")
       setItems(prev => prev.map(n => ({ ...n, isRead: true })))
-    } catch (e) { console.error(e) }
+      toast.success("All notifications marked as read")
+    } catch (e) {
+      toast.error(apiErrorMessage(e, "Could not update notifications"))
+    }
   }
 
-  if (!userId) return <div className="py-20 text-center text-gray-400">Please log in.</div>
+  if (!userId) return <div className="py-20 text-center text-muted-foreground">Please log in.</div>
   if (loading) return <Skeleton className="h-96 w-full" />
 
   const unreadCount = items.filter(n => !n.isRead).length
@@ -61,35 +74,40 @@ export default function NotificationsPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Notifications</h1>
         <div className="flex items-center gap-3">
-          <div className="flex gap-1 bg-[#1E293B] rounded-lg p-1">
+          <div className="flex gap-1 bg-card rounded-lg p-1">
             <button
               onClick={() => setFilter("all")}
-              className={`px-3 py-1 rounded text-sm font-medium ${filter === "all" ? "bg-blue-600 text-white" : "text-gray-400"}`}
+              className={`rounded px-3 py-1 text-sm font-medium transition-colors ${filter === "all" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-white"}`}
             >All</button>
             <button
               onClick={() => setFilter("unread")}
-              className={`px-3 py-1 rounded text-sm font-medium ${filter === "unread" ? "bg-blue-600 text-white" : "text-gray-400"}`}
-            >Unread {unreadCount > 0 && <span className="ml-1 bg-red-500 text-white text-xs px-1.5 rounded-full">{unreadCount}</span>}</button>
+              className={`rounded px-3 py-1 text-sm font-medium transition-colors ${filter === "unread" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-white"}`}
+            >Unread {unreadCount > 0 && <span className="ml-1 rounded-full bg-accent px-1.5 py-0.5 text-xs font-bold text-accent-foreground">{unreadCount}</span>}</button>
           </div>
           {unreadCount > 0 && (
-            <Button variant="outline" className="gap-2 bg-[#1E293B] border-gray-700 text-white hover:bg-[#2a3a4f]" onClick={markAllRead}>
-              <CheckCircle className="h-4 w-4" /> Mark all read
+            <Button variant="outline" className="gap-2" onClick={markAllRead}>
+              <CheckCircle2 className="h-4 w-4" /> Mark all read
             </Button>
           )}
         </div>
       </div>
 
       {items.length === 0 ? (
-        <Card className="bg-[#1E293B] border-0 shadow-lg">
-          <CardContent className="p-8 text-center">
-            <Inbox className="h-12 w-12 mx-auto mb-2 text-gray-600" />
-            <p className="text-gray-400">{filter === "unread" ? "No unread notifications." : "No notifications yet."}</p>
+        <Card className="border-0 bg-card shadow-lg">
+          <CardContent className="p-10 text-center">
+            <Inbox className="mx-auto mb-3 h-12 w-12 text-muted-foreground/50" aria-hidden="true" />
+            <p className="font-medium text-white">
+              {filter === "unread" ? "No unread notifications" : "No notifications yet"}
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {filter === "unread" ? "You're all caught up." : "Updates about services and ministries will appear here."}
+            </p>
           </CardContent>
         </Card>
       ) : (
         <div className="space-y-3">
           {items.map(n => (
-            <Card key={n.id} className={`border-0 shadow-lg ${n.isRead ? "bg-[#1E293B]" : "bg-[#243350] border-l-4 border-l-blue-500"}`}>
+            <Card key={n.id} className={`border-0 shadow-lg ${n.isRead ? "bg-card" : "border-l-4 border-l-accent bg-secondary"}`}>
               <CardContent className="p-4 flex items-start justify-between gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">

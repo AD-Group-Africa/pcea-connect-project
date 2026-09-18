@@ -86,7 +86,7 @@ export default function SundaySchoolTeacherPage() {
         </div>
 
         {classes.length === 0 ? (
-          <Card className="bg-[#1E293B] border-0 shadow-lg">
+          <Card className="bg-card border-0 shadow-lg">
             <CardContent className="p-8 text-center">
               <Users className="h-12 w-12 mx-auto mb-2 text-gray-600" />
               <p className="text-gray-400">No classes assigned to you yet.</p>
@@ -114,7 +114,7 @@ export default function SundaySchoolTeacherPage() {
               <>
                 {/* Stats grid */}
                 <div className="grid gap-4 md:grid-cols-3">
-                  <Card className="bg-[#1E293B] border-0 shadow-lg">
+                  <Card className="bg-card border-0 shadow-lg">
                     <CardContent className="p-4 flex items-center gap-3">
                       <Users className="h-8 w-8" style={{ color: theme.accent }} />
                       <div>
@@ -123,7 +123,7 @@ export default function SundaySchoolTeacherPage() {
                       </div>
                     </CardContent>
                   </Card>
-                  <Card className="bg-[#1E293B] border-0 shadow-lg">
+                  <Card className="bg-card border-0 shadow-lg">
                     <CardContent className="p-4 flex items-center gap-3">
                       <ClipboardList className="h-8 w-8" style={{ color: theme.accent }} />
                       <div>
@@ -132,7 +132,7 @@ export default function SundaySchoolTeacherPage() {
                       </div>
                     </CardContent>
                   </Card>
-                  <Card className="bg-[#1E293B] border-0 shadow-lg">
+                  <Card className="bg-card border-0 shadow-lg">
                     <CardContent className="p-4 flex items-center gap-3">
                       <BookOpen className="h-8 w-8" style={{ color: theme.accent }} />
                       <div>
@@ -153,7 +153,7 @@ export default function SundaySchoolTeacherPage() {
                   ) : (
                     <div className="space-y-2">
                       {children.map(child => (
-                        <Card key={child.id} className="bg-[#1E293B] border-0 shadow-lg">
+                        <Card key={child.id} className="bg-card border-0 shadow-lg">
                           <CardContent className="p-3 flex items-center justify-between">
                             <div>
                               <p className="text-sm font-medium text-white">{child.childName}</p>
@@ -191,7 +191,7 @@ export default function SundaySchoolTeacherPage() {
                     <h3 className="text-lg font-semibold text-white mb-3">Lessons</h3>
                     <div className="space-y-2">
                       {lessons.map(l => (
-                        <Card key={l.id} className="bg-[#1E293B] border-0 shadow-lg">
+                        <Card key={l.id} className="bg-card border-0 shadow-lg">
                           <CardContent className="p-3 flex items-center justify-between">
                             <div>
                               <p className="text-sm font-medium text-white">{l.title}</p>

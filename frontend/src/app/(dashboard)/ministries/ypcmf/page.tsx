@@ -89,7 +89,7 @@ export default function YPCMFPage() {
 
           {/* Mentorship — represented through projects (real data) */}
           {activeProjects > 0 && (
-            <Card className="bg-[#1E293B] border-0 shadow-lg">
+            <Card className="bg-card border-0 shadow-lg">
               <CardContent className="p-4 flex items-center gap-3">
                 <GraduationCap className="h-8 w-8" style={{ color: theme.accent }} />
                 <div>

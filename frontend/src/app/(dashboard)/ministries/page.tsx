@@ -10,7 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton"
 import { Church, Users, ArrowRight, Compass, Plus } from "lucide-react"
 import Link from "next/link"
-import api from "@/lib/api"
+import { toast } from "sonner"
+import api, { apiErrorMessage } from "@/lib/api"
 import { PageTransition } from "@/components/page-transition"
 import { EmptyState } from "@/components/empty-state"
 
@@ -62,8 +63,15 @@ export default function MinistriesPage() {
   useEffect(() => { loadMinistries() }, [])
 
   const handleCreate = async () => {
-    await api.post("/api/ministries", { name: newName, type: newType })
-    setCreateOpen(false); setNewName(""); loadMinistries()
+    if (!newName.trim()) { toast.error("Give the ministry a name"); return }
+    try {
+      await api.post("/api/ministries", { name: newName, type: newType })
+      setCreateOpen(false); setNewName("")
+      toast.success("Ministry created")
+      loadMinistries()
+    } catch (e) {
+      toast.error(apiErrorMessage(e, "Could not create the ministry. Please try again."))
+    }
   }
 
   if (loading) return <Skeleton className="h-96 w-full" />
@@ -75,15 +83,15 @@ export default function MinistriesPage() {
           <h1 className="text-3xl font-bold">Ministries</h1>
           <Dialog open={createOpen} onOpenChange={setCreateOpen}>
             <DialogTrigger asChild>
-              <Button className="gap-2 bg-blue-600 hover:bg-blue-700"><Plus className="h-4 w-4" /> Create</Button>
+              <Button className="gap-2 bg-primary hover:bg-primary/90"><Plus className="h-4 w-4" /> Create</Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md bg-gray-900 text-white">
+            <DialogContent className="sm:max-w-md">
               <DialogHeader><DialogTitle>New Ministry</DialogTitle></DialogHeader>
               <div className="space-y-3">
-                <div><Label>Name</Label><Input value={newName} onChange={(e) => setNewName(e.target.value)} className="bg-gray-800 border-gray-700 text-white" /></div>
+                <div><Label>Name</Label><Input value={newName} onChange={(e) => setNewName(e.target.value)} /></div>
                 <div><Label>Type</Label>
                   <Select value={newType} onValueChange={setNewType}>
-                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white"><SelectValue /></SelectTrigger>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="YOUTH_FELLOWSHIP">Youth Fellowship</SelectItem>
                       <SelectItem value="PCMF">PCMF</SelectItem>
@@ -98,7 +106,7 @@ export default function MinistriesPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={handleCreate}>Create</Button>
+                <Button className="w-full bg-primary hover:bg-primary/90" onClick={handleCreate}>Create</Button>
               </div>
             </DialogContent>
           </Dialog>
@@ -113,7 +121,7 @@ export default function MinistriesPage() {
           ) : (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {myMinistries.map(m => (
-                <Card key={m.id} className="bg-[#1E293B] border-0 shadow-lg hover:shadow-xl transition-shadow">
+                <Card key={m.id} className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow">
                   <CardHeader>
                     <CardTitle className="text-white">{m.name}</CardTitle>
                     <Badge className="w-fit">{m.type.replace(/_/g, " ")}</Badge>
@@ -140,7 +148,7 @@ export default function MinistriesPage() {
             </h2>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {exploreMinistries.map(m => (
-                <Card key={m.id} className="bg-[#1E293B] border-0 shadow-lg hover:shadow-xl transition-shadow">
+                <Card key={m.id} className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow">
                   <CardHeader>
                     <CardTitle className="text-white">{m.name}</CardTitle>
                     <Badge className="w-fit">{m.type.replace(/_/g, " ")}</Badge>
@@ -164,7 +172,7 @@ export default function MinistriesPage() {
             <Church className="h-5 w-5 text-blue-400" /> Learning &amp; Children
           </h2>
           <div className="grid gap-4 md:grid-cols-2">
-            <Card className="bg-[#1E293B] border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardContent className="p-4 flex items-center justify-between">
                 <div>
                   <p className="font-medium text-white">Sunday School</p>
@@ -173,7 +181,7 @@ export default function MinistriesPage() {
                 <Link href="/sunday-school"><Button variant="outline">Open</Button></Link>
               </CardContent>
             </Card>
-            <Card className="bg-[#1E293B] border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardContent className="p-4 flex items-center justify-between">
                 <div>
                   <p className="font-medium text-white">Catechism</p>

@@ -42,8 +42,9 @@ export default function ChurchStructurePage() {
   }, [])
 
   if (error) return (
-    <div className="flex items-center justify-center py-20 text-muted-foreground">
-      Please log in to view church structure.
+    <div className="flex flex-col items-center justify-center py-20 text-center">
+      <Church className="mb-3 h-10 w-10 text-muted-foreground/60" aria-hidden="true" />
+      <p className="text-muted-foreground">Church structure is available once you are signed in.</p>
     </div>
   )
 
@@ -54,55 +55,55 @@ export default function ChurchStructurePage() {
       <h1 className="text-3xl font-bold text-white">Church Structure</h1>
       <Accordion type="single" collapsible className="w-full space-y-3">
         {regions.map((region) => (
-          <AccordionItem key={region.id} value={region.id} className="border rounded-lg bg-card/50 backdrop-blur-sm">
+          <AccordionItem key={region.id} value={region.id} className="rounded-lg border bg-card/40">
             <AccordionTrigger className="px-6 py-4 hover:no-underline">
               <div className="flex items-center gap-3 text-left">
-                <Church className="h-5 w-5 text-blue-600" />
-                <span className="font-semibold text-lg">{region.name}</span>
+                <Church className="h-5 w-5 text-primary-foreground/80" />
+                <span className="text-lg font-semibold">{region.name}</span>
                 <Badge variant="outline" className="ml-2 text-xs">Region</Badge>
               </div>
             </AccordionTrigger>
-            <AccordionContent className="px-6 pb-4 space-y-2">
-              <div className="text-sm text-muted-foreground flex gap-4 mb-3">
-                {region.address && <span><MapPin className="inline h-4 w-4 mr-1"/>{region.address}</span>}
-                {region.phone && <span><Phone className="inline h-4 w-4 mr-1"/>{region.phone}</span>}
-                {region.email && <span><Mail className="inline h-4 w-4 mr-1"/>{region.email}</span>}
+            <AccordionContent className="mb-3 space-y-2 px-6 pb-4">
+              <div className="mb-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                {region.address && <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4" aria-hidden="true" />{region.address}</span>}
+                {region.phone && <span className="flex items-center gap-1.5"><Phone className="h-4 w-4" aria-hidden="true" />{region.phone}</span>}
+                {region.email && <span className="flex items-center gap-1.5"><Mail className="h-4 w-4" aria-hidden="true" />{region.email}</span>}
               </div>
               {(presbyteries[region.id] || []).map((pres) => (
-                <Accordion key={pres.id} type="single" collapsible className="pl-4 border-l-2 border-blue-100 dark:border-blue-900">
+                <Accordion key={pres.id} type="single" collapsible className="border-l border-border pl-4">
                   <AccordionItem value={pres.id} className="border-0">
                     <AccordionTrigger className="py-2 hover:no-underline">
                       <div className="flex items-center gap-2">
-                        <Building2 className="h-4 w-4 text-blue-500" />
+                        <Building2 className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
                         <span className="font-medium">{pres.name}</span>
                         <Badge variant="secondary" className="text-xs">Presbytery</Badge>
                       </div>
                     </AccordionTrigger>
-                    <AccordionContent className="pb-2 space-y-2">
+                    <AccordionContent className="space-y-2 pb-2">
                       {(parishes[pres.id] || []).map((parish) => (
-                        <Accordion key={parish.id} type="single" collapsible className="pl-4 border-l-2 border-blue-200 dark:border-blue-800">
+                        <Accordion key={parish.id} type="single" collapsible className="border-l border-border pl-4">
                           <AccordionItem value={parish.id} className="border-0">
                             <AccordionTrigger className="py-2 hover:no-underline">
                               <div className="flex items-center gap-2">
-                                <Building2 className="h-4 w-4 text-green-400" />
+                                <Building2 className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
                                 <span>{parish.name}</span>
                                 <Badge variant="outline" className="text-xs">Parish</Badge>
                               </div>
                             </AccordionTrigger>
-                            <AccordionContent className="pb-2 pl-4 space-y-1">
+                            <AccordionContent className="space-y-1 pb-2 pl-4">
                               {(congregations[parish.id] || []).map((cong) => (
-                                <Card key={cong.id} className="p-3 bg-background/50 backdrop-blur-sm">
-                                  <div className="flex items-center justify-between">
+                                <Card key={cong.id} className="border-border/60 bg-muted/40 p-3">
+                                  <div className="flex items-center justify-between gap-2">
                                     <div className="flex items-center gap-2">
-                                      <Church className="h-4 w-4 text-blue-600" />
+                                      <Church className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
                                       <span className="font-medium">{cong.name}</span>
                                     </div>
                                     <Badge variant="outline" className="text-xs">Congregation</Badge>
                                   </div>
-                                  <div className="text-sm text-muted-foreground mt-1 flex gap-4">
-                                    {cong.address && <span><MapPin className="inline h-3 w-3 mr-1"/>{cong.address}</span>}
-                                    {cong.phone && <span><Phone className="inline h-3 w-3 mr-1"/>{cong.phone}</span>}
-                                    {cong.email && <span><Mail className="inline h-3 w-3 mr-1"/>{cong.email}</span>}
+                                  <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                                    {cong.address && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" aria-hidden="true" />{cong.address}</span>}
+                                    {cong.phone && <span className="flex items-center gap-1"><Phone className="h-3 w-3" aria-hidden="true" />{cong.phone}</span>}
+                                    {cong.email && <span className="flex items-center gap-1"><Mail className="h-3 w-3" aria-hidden="true" />{cong.email}</span>}
                                   </div>
                                 </Card>
                               ))}

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Release/default: HTTPS only. Debug build overrides this file to permit
+     loopback hosts for emulator testing (see src/debug/res/xml). -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false" />
+</network-security-config>

@@ -22,7 +22,10 @@ export default function CommunicationPage() {
       ])
       setAnnouncements(annRes.data.data || [])
       setPrayers(prayRes.data.data || [])
-    } catch (e) { console.error(e) } finally { setLoading(false) }
+    } catch {
+      setAnnouncements([])
+      setPrayers([])
+    } finally { setLoading(false) }
   }
 
   useEffect(() => { if (userId) loadData() }, [userId])
@@ -37,7 +40,7 @@ export default function CommunicationPage() {
         <h2 className="text-xl font-semibold mb-3"><Megaphone className="inline h-5 w-5 mr-2" />Announcements</h2>
         {announcements.length === 0 ? <p className="text-gray-400">No announcements yet.</p> :
           announcements.map(a => (
-            <Card key={a.id} className="bg-[#1E293B] border-0 shadow-lg mb-2">
+            <Card key={a.id} className="bg-card border-0 shadow-lg mb-2">
               <CardHeader><CardTitle className="text-white">{a.title}</CardTitle></CardHeader>
               <CardContent><p className="text-gray-300">{a.content}</p></CardContent>
             </Card>
@@ -48,7 +51,7 @@ export default function CommunicationPage() {
         <h2 className="text-xl font-semibold mb-3"><Heart className="inline h-5 w-5 mr-2" />Prayer Feed</h2>
         {prayers.length === 0 ? <p className="text-gray-400">No prayer requests yet.</p> :
           prayers.map(p => (
-            <Card key={p.id} className="bg-[#1E293B] border-0 shadow-lg mb-2">
+            <Card key={p.id} className="bg-card border-0 shadow-lg mb-2">
               <CardContent className="p-4"><p className="text-white">{p.request}</p></CardContent>
             </Card>
           ))

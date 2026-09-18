@@ -1,23 +1,20 @@
 "use client"
 import Link from "next/link"
-import { Church, Users, BookOpen, Heart, Video, GraduationCap, ArrowRight, Shield, Bell, Newspaper, Music } from "lucide-react"
+import { Church, Users, BookOpen, Heart, Video, GraduationCap, ArrowRight, Shield, Bell, Newspaper, type LucideIcon } from "lucide-react"
+import { PceaLogoMark } from "@/components/pcea-logo"
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#0a0f1e] text-white" style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}>
+    <div className="min-h-screen bg-background text-white">
       {/* Hero */}
       <section className="relative flex flex-col items-center justify-center min-h-screen px-6 text-center"
         style={{ background: "radial-gradient(ellipse at top, rgba(26,60,143,0.3), transparent 70%)" }}>
         <div className="mb-8">
-          <svg viewBox="0 0 100 140" width="60" height="84" xmlns="http://www.w3.org/2000/svg">
-            <path d="M35 0 L40 0 L40 45 L0 45 L0 50 L40 50 L40 95 L35 95 L35 140 L40 140 L40 95 L100 95 L100 90 L40 90 L40 50 L60 50 L60 45 L40 45 L40 0 Z" fill="#1A3C8F" />
-            <path d="M40 0 L45 0 L45 45 L100 45 L100 50 L45 50 L45 90 L100 90 L100 95 L45 95 L45 140 L40 140 L40 0 Z" fill="#E2A619" />
-            <rect x="39.5" y="0" width="1" height="140" fill="white" />
-          </svg>
+          <PceaLogoMark width={60} height={84} />
         </div>
 
         <h1 className="text-4xl sm:text-5xl font-extrabold mb-2">
-          PCEA <span className="text-[#E2A619]">Connect</span>
+          PCEA <span className="text-accent">Connect</span>
         </h1>
         <p className="text-xl text-[#94a3b8] mb-1">The Digital Church</p>
         <p className="text-base text-[#64748b] max-w-lg mb-8 leading-relaxed">
@@ -25,7 +22,7 @@ export default function LandingPage() {
         </p>
 
         <div className="flex gap-3 flex-wrap justify-center">
-          <Link href="/register" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#1A3C8F] hover:bg-[#153074] text-white font-semibold text-base transition-colors">
+          <Link href="/register" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary hover:bg-primary/90 text-white font-semibold text-base transition-colors">
             Join Your Church <ArrowRight size={18} />
           </Link>
           <Link href="/login" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-white/15 text-white font-semibold text-base hover:bg-white/5 transition-colors">
@@ -54,12 +51,12 @@ export default function LandingPage() {
       <section className="py-20 px-6 max-w-4xl mx-auto border-t border-white/5">
         <div className="grid gap-8 sm:grid-cols-2">
           <div>
-            <Newspaper className="h-8 w-8 text-[#E2A619] mb-3" />
+            <Newspaper className="h-8 w-8 text-accent mb-3" />
             <h3 className="text-lg font-bold mb-1">Church News &amp; Updates</h3>
             <p className="text-sm text-gray-400 leading-relaxed">Stay informed about congregation announcements, ministry activity, and PCEA news. No more fragmented WhatsApp groups.</p>
           </div>
           <div>
-            <Bell className="h-8 w-8 text-[#E2A619] mb-3" />
+            <Bell className="h-8 w-8 text-accent mb-3" />
             <h3 className="text-lg font-bold mb-1">Notifications</h3>
             <p className="text-sm text-gray-400 leading-relaxed">Receive updates about services, events, ministry activities and announcements &mdash; in one inbox, not scattered across channels.</p>
           </div>
@@ -69,7 +66,7 @@ export default function LandingPage() {
       {/* Security & Privacy */}
       <section className="py-20 px-6 max-w-4xl mx-auto border-t border-white/5">
         <div className="text-center mb-8">
-          <Shield className="h-12 w-12 text-[#1A3C8F] mx-auto mb-3" />
+          <Shield className="mx-auto mb-3 h-12 w-12 text-blue-400" aria-hidden="true" />
           <h2 className="text-2xl font-bold mb-2">Security &amp; Privacy by Design</h2>
           <p className="text-gray-400 text-sm max-w-xl mx-auto">PCEA Connect is designed to support applicable data-protection requirements and privacy-by-design practices. Child data is treated with special care &mdash; children have no login credentials, and access is enforced server-side.</p>
         </div>
@@ -85,7 +82,7 @@ export default function LandingPage() {
       <section className="py-20 px-6 text-center border-t border-white/5">
         <h2 className="text-2xl sm:text-3xl font-bold mb-3">Ready to connect?</h2>
         <p className="text-gray-400 mb-6 max-w-md mx-auto">Join your congregation on PCEA Connect today.</p>
-        <Link href="/register" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#1A3C8F] hover:bg-[#153074] text-white font-semibold transition-colors">
+        <Link href="/register" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary hover:bg-primary/90 text-white font-semibold transition-colors">
           Get Started <ArrowRight size={18} />
         </Link>
       </section>
@@ -101,10 +98,10 @@ export default function LandingPage() {
   )
 }
 
-function Feature({ icon: Icon, title, desc }: { icon: any; title: string; desc: string }) {
+function Feature({ icon: Icon, title, desc }: { icon: LucideIcon; title: string; desc: string }) {
   return (
     <div className="rounded-xl p-6 bg-white/[0.03] border border-white/5 hover:border-white/10 transition-colors">
-      <Icon size={28} className="text-[#E2A619] mb-3" />
+      <Icon size={28} className="text-accent mb-3" />
       <h3 className="text-lg font-bold mb-1">{title}</h3>
       <p className="text-sm text-gray-400 leading-relaxed">{desc}</p>
     </div>

@@ -10,4 +10,12 @@ application-local.yml
 .idea/
 .freebuff/
 .env.production
-lib/
+/lib/
+test-results/
+playwright-report/
+android-shell/local.properties
+android-shell/*.keystore
+android-shell/app/build/
+android-shell/.gradle/
+android-shell/build/
+PCEA-Connect-Demo-*.apk

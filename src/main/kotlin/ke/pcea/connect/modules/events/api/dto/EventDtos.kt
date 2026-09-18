@@ -4,7 +4,7 @@ import ke.pcea.connect.modules.events.domain.RecurrenceType
 
 data class CreateEventRequest(
     val title: String, val description: String = "", val type: EventType = EventType.OTHER,
-    val location: String = "", val organizerId: String, val startTime: String,
+    val location: String = "", val organizerId: String = "", val startTime: String,
     val endTime: String? = null, val maxAttendees: Int = 0,
     val requiresRegistration: Boolean = false, val qrCheckInEnabled: Boolean = false,
     val recurrenceType: RecurrenceType = RecurrenceType.NONE, val recurrenceEndDate: String? = null

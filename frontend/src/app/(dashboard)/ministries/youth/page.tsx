@@ -80,7 +80,7 @@ export default function YouthPage() {
                 {events.map(e => {
                   const EventIcon = getEventIcon(e.title)
                   return (
-                    <Card key={e.id} className="bg-[#1E293B] border-0 shadow-lg">
+                    <Card key={e.id} className="bg-card border-0 shadow-lg">
                       <CardContent className="p-4">
                         <div className="flex items-center gap-2 mb-2">
                           <EventIcon className="h-6 w-6" style={{ color: theme.accent }} />

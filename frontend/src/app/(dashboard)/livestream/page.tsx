@@ -9,9 +9,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Skeleton } from "@/components/ui/skeleton"
-import api from "@/lib/api"
+import api, { apiErrorMessage } from "@/lib/api"
 import { getUserId } from "@/lib/auth"
-import { Plus, Play } from "lucide-react"
+import { CalendarDays, History, Plus, Play, Radio } from "lucide-react"
+import { toast } from "sonner"
 
 interface Livestream {
   id: string
@@ -39,6 +40,7 @@ export default function LivestreamPage() {
   const [platform, setPlatform] = useState("YOUTUBE")
   const [embedUrl, setEmbedUrl] = useState("")
   const [scheduledAt, setScheduledAt] = useState("")
+  const [scheduling, setScheduling] = useState(false)
 
   useEffect(() => {
     setMounted(true)
@@ -50,30 +52,57 @@ export default function LivestreamPage() {
     }
     api.get("/api/livestream")
       .then(res => setStreams(res.data.data || []))
-      .catch(console.error)
+      .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
 
+  const reloadStreams = async () => {
+    try {
+      const res = await api.get("/api/livestream")
+      setStreams(res.data.data || [])
+    } catch { /* keep existing list */ }
+  }
+
   const handleSchedule = async () => {
-    await api.post("/api/livestream", {
-      title, description: "", preacher, scriptureRef: "", platform,
-      embedUrl, thumbnailUrl: "", scheduledAt
-    })
-    setScheduleOpen(false)
-    const res = await api.get("/api/livestream")
-    setStreams(res.data.data || [])
+    if (!title.trim() || !scheduledAt) {
+      toast.error("Please add a title and start time")
+      return
+    }
+    setScheduling(true)
+    try {
+      await api.post("/api/livestream", {
+        title: title.trim(), description: "", preacher, scriptureRef: "", platform,
+        embedUrl, thumbnailUrl: "", scheduledAt
+      })
+      setScheduleOpen(false)
+      setTitle(""); setPreacher(""); setEmbedUrl(""); setScheduledAt("")
+      toast.success("Livestream scheduled")
+      reloadStreams()
+    } catch (e) {
+      toast.error(apiErrorMessage(e, "Could not schedule the livestream. Please try again."))
+    } finally {
+      setScheduling(false)
+    }
   }
 
   const handleGoLive = async (id: string) => {
-    await api.put(`/api/livestream/${id}/go-live`)
-    const res = await api.get("/api/livestream")
-    setStreams(res.data.data || [])
+    try {
+      await api.put(`/api/livestream/${id}/go-live`)
+      toast.success("You are live")
+      reloadStreams()
+    } catch (e) {
+      toast.error(apiErrorMessage(e, "Could not start the livestream"))
+    }
   }
 
   const handleEnd = async (id: string) => {
-    await api.put(`/api/livestream/${id}/end`)
-    const res = await api.get("/api/livestream")
-    setStreams(res.data.data || [])
+    try {
+      await api.put(`/api/livestream/${id}/end`)
+      toast.success("Livestream ended")
+      reloadStreams()
+    } catch (e) {
+      toast.error(apiErrorMessage(e, "Could not end the livestream"))
+    }
   }
 
   if (!mounted) return null
@@ -107,9 +136,9 @@ export default function LivestreamPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <div><Label>Embed URL</Label><Input value={embedUrl} onChange={(e) => setEmbedUrl(e.target.value)} /></div>
-              <div><Label>Scheduled At</Label><Input type="datetime-local" value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} /></div>
-              <Button className="w-full" onClick={handleSchedule}>Schedule</Button>
+              <div><Label htmlFor="ls-embed">Embed / video URL</Label><Input id="ls-embed" value={embedUrl} onChange={(e) => setEmbedUrl(e.target.value)} placeholder="https://www.youtube.com/embed/…" /></div>
+              <div><Label htmlFor="ls-scheduled">Start time</Label><Input id="ls-scheduled" type="datetime-local" value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} required /></div>
+              <Button className="w-full" disabled={scheduling} onClick={handleSchedule}>{scheduling ? "Scheduling…" : "Schedule"}</Button>
             </div>
           </DialogContent>
         </Dialog>
@@ -117,9 +146,9 @@ export default function LivestreamPage() {
 
       <Tabs defaultValue="live" className="w-full">
         <TabsList className="mb-4">
-          <TabsTrigger value="live">?? Live Now</TabsTrigger>
-          <TabsTrigger value="upcoming">?? Upcoming</TabsTrigger>
-          <TabsTrigger value="past">?? Past</TabsTrigger>
+          <TabsTrigger value="live"><Radio className="h-4 w-4" /> Live Now</TabsTrigger>
+          <TabsTrigger value="upcoming"><CalendarDays className="h-4 w-4" /> Upcoming</TabsTrigger>
+          <TabsTrigger value="past"><History className="h-4 w-4" /> Past</TabsTrigger>
         </TabsList>
 
         {["live","upcoming","past"].map(tab => (
@@ -132,7 +161,7 @@ export default function LivestreamPage() {
               {streams.filter(s => tab === "live" ? s.status === "LIVE" :
                                      tab === "upcoming" ? s.status === "SCHEDULED" :
                                      s.status === "ENDED").map(s => (
-                <Card key={s.id} className="backdrop-blur-sm bg-white/80 dark:bg-gray-900/80">
+                <Card key={s.id} className="bg-card">
                   <CardHeader>
                     <CardTitle className="text-lg">{s.title}</CardTitle>
                     <div className="flex gap-2">
@@ -144,7 +173,7 @@ export default function LivestreamPage() {
                     {s.preacher && <p className="text-sm">Preacher: {s.preacher}</p>}
                     <p className="text-sm text-muted-foreground">{new Date(s.scheduledAt).toLocaleString()}</p>
                     {s.embedUrl && s.status === "LIVE" && (
-                      <iframe src={s.embedUrl} className="w-full h-48 rounded-lg" allowFullScreen />
+                      <iframe src={s.embedUrl} title={s.title} className="aspect-video w-full rounded-lg" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
                     )}
                     <div className="flex gap-2 mt-2">
                       {s.status === "LIVE" && (

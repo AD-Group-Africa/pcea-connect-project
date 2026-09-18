@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Skeleton } from "@/components/ui/skeleton"
-import api from "@/lib/api"
+import { toast } from "sonner"
+import api, { apiErrorMessage } from "@/lib/api"
 import { getUserId } from "@/lib/auth"
 import { Hand, Stethoscope, Plus } from "lucide-react"
 
@@ -23,19 +24,25 @@ export default function PastoralCarePage() {
     try {
       const res = await api.get("/api/pastoralcare/prayer/mine")
       setPrayers(res.data.data || [])
-    } catch (e) {
-      console.error(e)
+    } catch {
+      setPrayers([])
     } finally { setLoading(false) }
   }
 
   useEffect(() => { setMounted(true); if (userId) loadData(); else setLoading(false) }, [userId])
 
   const handleSubmitPrayer = async () => {
-    await api.post("/api/pastoralcare/prayer", { request: prayerRequest, isAnonymous })
-    setPrayerOpen(false)
-    setPrayerRequest("")
-    setIsAnonymous(false)
-    loadData()
+    if (!prayerRequest.trim()) { toast.error("Write your prayer request first"); return }
+    try {
+      await api.post("/api/pastoralcare/prayer", { request: prayerRequest, isAnonymous })
+      setPrayerOpen(false)
+      setPrayerRequest("")
+      setIsAnonymous(false)
+      toast.success("Prayer request submitted")
+      loadData()
+    } catch (e) {
+      toast.error(apiErrorMessage(e, "Could not submit your prayer request. Please try again."))
+    }
   }
 
   if (!mounted) return null
@@ -55,17 +62,17 @@ export default function PastoralCarePage() {
           </h2>
           <Dialog open={prayerOpen} onOpenChange={setPrayerOpen}>
             <DialogTrigger asChild>
-              <Button size="sm" className="bg-blue-600 hover:bg-blue-700 gap-2">
+              <Button size="sm" className="bg-primary hover:bg-primary/90 gap-2">
                 <Plus className="h-4 w-4" /> Submit Prayer
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md bg-gray-900 text-white">
+            <DialogContent className="sm:max-w-md">
               <DialogHeader><DialogTitle>Submit Prayer Request</DialogTitle></DialogHeader>
               <div className="space-y-3">
                 <div>
                   <Label>Your Request</Label>
                   <textarea
-                    className="w-full bg-gray-800 border-gray-700 text-white rounded p-2 min-h-[100px]"
+                    className="w-full rounded p-2 min-h-[100px]"
                     value={prayerRequest}
                     onChange={(e) => setPrayerRequest(e.target.value)}
                     placeholder="Share your prayer need..."
@@ -75,13 +82,13 @@ export default function PastoralCarePage() {
                   <input type="checkbox" id="anonymous" checked={isAnonymous} onChange={(e) => setIsAnonymous(e.target.checked)} />
                   <Label htmlFor="anonymous" className="text-sm">Submit anonymously</Label>
                 </div>
-                <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={handleSubmitPrayer}>Submit</Button>
+                <Button className="w-full bg-primary hover:bg-primary/90" onClick={handleSubmitPrayer}>Submit</Button>
               </div>
             </DialogContent>
           </Dialog>
         </div>
         {prayers.length === 0 ? (
-          <Card className="bg-[#1E293B] border-0 shadow-lg">
+          <Card className="bg-card border-0 shadow-lg">
             <CardContent className="p-6 text-center">
               <Hand className="h-10 w-10 mx-auto mb-2 text-gray-600" />
               <p className="text-gray-400">No prayer requests submitted yet.</p>
@@ -90,7 +97,7 @@ export default function PastoralCarePage() {
         ) : (
           <div className="space-y-2">
             {prayers.map(p => (
-              <Card key={p.id} className="bg-[#1E293B] border-0 shadow-lg">
+              <Card key={p.id} className="bg-card border-0 shadow-lg">
                 <CardContent className="p-4">
                   <p className="text-white">{p.request}</p>
                   <div className="flex items-center gap-2 mt-2">
@@ -104,7 +111,7 @@ export default function PastoralCarePage() {
           </div>
         )}
       </section>
-      <Card className="bg-[#1E293B] border-0 shadow-lg">
+      <Card className="bg-card border-0 shadow-lg">
         <CardContent className="p-6">
           <div className="flex items-center gap-2 mb-2">
             <Stethoscope className="h-5 w-5 text-blue-500" />

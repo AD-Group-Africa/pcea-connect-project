@@ -9,9 +9,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Skeleton } from "@/components/ui/skeleton"
-import api from "@/lib/api"
+import { toast } from "sonner"
+import api, { apiErrorMessage } from "@/lib/api"
 import { getUserId } from "@/lib/auth"
-import { Play, Plus, ListMusic, Mic, Music, BookOpen } from "lucide-react"
+import { Play, Plus, ListMusic, Mic, Music, BookOpen, X } from "lucide-react"
 
 interface Track {
   id: string
@@ -66,29 +67,49 @@ export default function MediaPage() {
     ]).then(([tracksRes, playlistsRes]) => {
       setTracks(tracksRes.data.data || [])
       setPlaylists(playlistsRes.data.data || [])
-    }).catch(console.error).finally(() => setLoading(false))
+    }).catch(() => {
+      setTracks([])
+      setPlaylists([])
+    }).finally(() => setLoading(false))
   }, [])
 
   const handleCreateTrack = async () => {
-    await api.post("/api/media/sermons", {
-      title, description: "", preacher, scriptureRef: "",
-      type: "AUDIO_FILE", videoUrl, audioUrl, thumbnailUrl, category
-    })
-    setCreateOpen(false)
-    const res = await api.get("/api/media/sermons")
-    setTracks(res.data.data || [])
+    if (!title.trim()) { toast.error("Give the track a title"); return }
+    try {
+      await api.post("/api/media/sermons", {
+        title, description: "", preacher, scriptureRef: "",
+        type: "AUDIO_FILE", videoUrl, audioUrl, thumbnailUrl, category
+      })
+      setCreateOpen(false)
+      toast.success("Track added")
+      const res = await api.get("/api/media/sermons")
+      setTracks(res.data.data || [])
+    } catch (e) {
+      toast.error(apiErrorMessage(e, "Could not add the track. Please try again."))
+    }
   }
 
   const handleCreatePlaylist = async () => {
-    await api.post("/api/media/playlists", { name: playlistName, description: playlistDesc })
-    setPlaylistOpen(false)
-    setPlaylistName(""); setPlaylistDesc("")
-    const res = await api.get("/api/media/playlists")
-    setPlaylists(res.data.data || [])
+    if (!playlistName.trim()) { toast.error("Give the playlist a name"); return }
+    try {
+      await api.post("/api/media/playlists", { name: playlistName, description: playlistDesc })
+      setPlaylistOpen(false)
+      setPlaylistName(""); setPlaylistDesc("")
+      toast.success("Playlist created")
+      const res = await api.get("/api/media/playlists")
+      setPlaylists(res.data.data || [])
+    } catch (e) {
+      toast.error(apiErrorMessage(e, "Could not create the playlist. Please try again."))
+    }
   }
 
   const handleAddToPlaylist = async (playlistId: string, sermonId: string) => {
-    await api.post(`/api/media/playlists/${playlistId}/items`, { sermonId })
+    try {
+      await api.post(`/api/media/playlists/${playlistId}/items`, { sermonId })
+      toast.success("Added to playlist")
+    } catch (e) {
+      toast.error(apiErrorMessage(e, "Could not add to this playlist"))
+    }
   }
 
   if (!mounted) return null
@@ -144,15 +165,17 @@ export default function MediaPage() {
 
       {/* Now Playing Bar */}
       {nowPlaying && (
-        <Card className="bg-green-50 dark:bg-green-900/20 border-blue-200 dark:border-blue-800">
-          <CardContent className="p-4 flex items-center gap-4">
-            <Button size="icon" variant="ghost" onClick={() => setNowPlaying(null)}>?</Button>
-            <div>
-              <p className="font-semibold">{nowPlaying.title}</p>
-              <p className="text-sm text-muted-foreground">{nowPlaying.preacher}</p>
+        <Card className="border border-primary/25 bg-card">
+          <CardContent className="flex items-center gap-4 p-4">
+            <Button size="icon" variant="ghost" onClick={() => setNowPlaying(null)} aria-label="Stop playing">
+              <X className="h-5 w-5" />
+            </Button>
+            <div className="min-w-0">
+              <p className="truncate font-semibold">{nowPlaying.title}</p>
+              <p className="truncate text-sm text-muted-foreground">{nowPlaying.preacher}</p>
             </div>
             {nowPlaying.audioUrl && (
-              <audio controls autoPlay className="flex-1 h-10">
+              <audio controls autoPlay className="h-10 min-w-0 flex-1">
                 <source src={nowPlaying.audioUrl} type="audio/mpeg" />
               </audio>
             )}
@@ -180,7 +203,7 @@ export default function MediaPage() {
         <TabsContent value="playlists">
           {playlists.length === 0 ? <p className="text-muted-foreground">No playlists yet.</p> :
             playlists.map(p => (
-              <Card key={p.id} className="mb-2 backdrop-blur-sm bg-white/80 dark:bg-gray-900/80">
+              <Card key={p.id} className="mb-2 bg-card">
                 <CardHeader><CardTitle className="text-lg">{p.name}</CardTitle></CardHeader>
                 <CardContent><p className="text-sm text-muted-foreground">{p.description}</p></CardContent>
               </Card>
@@ -197,7 +220,7 @@ function TrackList({ tracks, setNowPlaying, playlists, handleAddToPlaylist }: an
     <div className="space-y-2">
       {tracks.length === 0 ? <p className="text-muted-foreground">No tracks yet.</p> :
         tracks.map((track: Track) => (
-          <Card key={track.id} className="backdrop-blur-sm bg-white/80 dark:bg-gray-900/80">
+          <Card key={track.id} className="bg-card">
             <CardContent className="p-4 flex items-center gap-4">
               {track.thumbnailUrl && <img src={track.thumbnailUrl} className="w-16 h-16 rounded object-cover" />}
               <div className="flex-1">

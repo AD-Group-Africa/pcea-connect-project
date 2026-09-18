@@ -83,7 +83,7 @@ export default function SundaySchoolParentPage() {
         </div>
 
         {children.length === 0 ? (
-          <Card className="bg-[#1E293B] border-0 shadow-lg">
+          <Card className="bg-card border-0 shadow-lg">
             <CardContent className="p-8 text-center">
               <Sun className="h-12 w-12 mx-auto mb-2 text-gray-600" />
               <p className="text-gray-400">No children linked to your account.</p>
@@ -119,7 +119,7 @@ export default function SundaySchoolParentPage() {
 
                 {/* Stats grid */}
                 <div className="grid gap-4 md:grid-cols-3">
-                  <Card className="bg-[#1E293B] border-0 shadow-lg">
+                  <Card className="bg-card border-0 shadow-lg">
                     <CardContent className="p-4 flex items-center gap-3">
                       <Calendar className="h-8 w-8" style={{ color: theme.accent }} />
                       <div>
@@ -128,7 +128,7 @@ export default function SundaySchoolParentPage() {
                       </div>
                     </CardContent>
                   </Card>
-                  <Card className="bg-[#1E293B] border-0 shadow-lg">
+                  <Card className="bg-card border-0 shadow-lg">
                     <CardContent className="p-4 flex items-center gap-3">
                       <BookOpen className="h-8 w-8" style={{ color: theme.accent }} />
                       <div>
@@ -137,7 +137,7 @@ export default function SundaySchoolParentPage() {
                       </div>
                     </CardContent>
                   </Card>
-                  <Card className="bg-[#1E293B] border-0 shadow-lg">
+                  <Card className="bg-card border-0 shadow-lg">
                     <CardContent className="p-4 flex items-center gap-3">
                       <TrendingUp className="h-8 w-8" style={{ color: theme.accent }} />
                       <div>
@@ -150,7 +150,7 @@ export default function SundaySchoolParentPage() {
 
                 {/* Teacher Note */}
                 {latestProgress?.note && (
-                  <Card className="bg-[#1E293B] border-0 shadow-lg">
+                  <Card className="bg-card border-0 shadow-lg">
                     <CardContent className="p-4">
                       <div className="flex items-center gap-2 mb-1">
                         <FileText className="h-4 w-4" style={{ color: theme.accent }} />
@@ -167,7 +167,7 @@ export default function SundaySchoolParentPage() {
                     <h3 className="text-lg font-semibold text-white mb-3">Attendance History</h3>
                     <div className="space-y-2">
                       {attendance.map(a => (
-                        <Card key={a.id} className="bg-[#1E293B] border-0 shadow-lg">
+                        <Card key={a.id} className="bg-card border-0 shadow-lg">
                           <CardContent className="p-3 flex items-center justify-between">
                             <span className="text-sm text-gray-300">{new Date(a.attendanceDate).toLocaleDateString()}</span>
                             <Badge style={{ background: a.present ? theme.accent : "#555", color: "white" }}>
@@ -186,7 +186,7 @@ export default function SundaySchoolParentPage() {
                     <h3 className="text-lg font-semibold text-white mb-3">Lessons</h3>
                     <div className="space-y-2">
                       {lessons.map(l => (
-                        <Card key={l.id} className="bg-[#1E293B] border-0 shadow-lg">
+                        <Card key={l.id} className="bg-card border-0 shadow-lg">
                           <CardContent className="p-3 flex items-center justify-between">
                             <div>
                               <p className="text-sm font-medium text-white">{l.title}</p>

@@ -15,6 +15,13 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: false
+    # H2 cannot parse Postgres-only SQL (e.g. the PL/pgSQL in
+    # V050__fix_livestream_status_ordinal_drift.sql). Flyway scans locations
+    # RECURSIVELY, so vendor migrations live in db/migration-postgresql — a
+    # sibling that the base classpath:db/migration scan can never reach — and
+    # only Postgres profiles (application.yml, application-postgres-test.yml)
+    # add that location explicitly.
+    locations: classpath:db/migration
   main:
     allow-bean-definition-overriding: true
 

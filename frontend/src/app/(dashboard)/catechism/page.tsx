@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { BookOpen, Lock, CheckCircle2, Circle, PlayCircle, ArrowRight, GraduationCap } from "lucide-react"
 import { PageTransition } from "@/components/page-transition"
-import api from "@/lib/api"
+import { toast } from "sonner"
+import api, { apiErrorMessage } from "@/lib/api"
 
 const accent = "#2563EB"
 const accentLight = "#3B82F6"
@@ -104,7 +105,7 @@ export default function CatechismPage() {
             {/* No enrollment — show available courses */}
             <p className="text-gray-400">Available courses:</p>
             {courses.length === 0 ? (
-              <Card className="bg-[#1E293B] border-0 shadow-lg">
+              <Card className="bg-card border-0 shadow-lg">
                 <CardContent className="p-8 text-center">
                   <BookOpen className="h-12 w-12 mx-auto mb-2 text-gray-600" />
                   <p className="text-gray-400">No catechism courses available yet.</p>
@@ -114,7 +115,7 @@ export default function CatechismPage() {
             ) : (
               <div className="space-y-2">
                 {courses.map(c => (
-                  <Card key={c.id} className="bg-[#1E293B] border-0 shadow-lg">
+                  <Card key={c.id} className="bg-card border-0 shadow-lg">
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
                         <p className="font-medium text-white">{c.name}</p>
@@ -132,7 +133,7 @@ export default function CatechismPage() {
         ) : journey ? (
           <>
             {/* Progress overview */}
-            <Card className="bg-[#1E293B] border-0 shadow-lg">
+            <Card className="bg-card border-0 shadow-lg">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-3">
                   <div>
@@ -161,7 +162,7 @@ export default function CatechismPage() {
                 })
 
                 return (
-                  <Card key={m.id} className="bg-[#1E293B] border-0 shadow-lg">
+                  <Card key={m.id} className="bg-card border-0 shadow-lg">
                     <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
                         {moduleCompleted ? (
@@ -207,7 +208,9 @@ export default function CatechismPage() {
                                       status: newStatus
                                     })
                                     loadJourney(enrollments[0])
-                                  } catch { /* empty */ }
+                                  } catch (e) {
+                                    toast.error(apiErrorMessage(e, "Could not update your progress"))
+                                  }
                                 }}
                               >
                                 {status === "COMPLETED" ? "Completed" : "Continue"}

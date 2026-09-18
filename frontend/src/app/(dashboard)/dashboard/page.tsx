@@ -72,7 +72,7 @@ export default function DashboardPage() {
         {/* Today's Worship — Hero Card */}
         {todaysWorship ? (
           <Card className="border border-blue-800/50 shadow-xl overflow-hidden">
-            <div className="bg-gradient-to-r from-[#1A3C8F] to-[#0a0f1e] p-5 sm:p-6">
+            <div className="bg-gradient-to-r from-primary to-background p-5 sm:p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Church className="h-5 w-5 text-blue-400" />
@@ -125,7 +125,7 @@ export default function DashboardPage() {
             </div>
           </Card>
         ) : latestBulletin ? (
-          <Card className="bg-[#1E293B] border-0 shadow-lg">
+          <Card className="bg-card border-0 shadow-lg">
             <CardContent className="p-5 sm:p-6">
               <div className="flex items-center gap-2 mb-2">
                 <Church className="h-5 w-5 text-blue-400" />
@@ -139,7 +139,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         ) : (
-          <Card className="bg-[#1E293B] border-0 shadow-lg">
+          <Card className="bg-card border-0 shadow-lg">
             <CardContent className="p-5 sm:p-6 text-center">
               <Church className="h-10 w-10 mx-auto mb-2 text-gray-600" />
               <p className="text-gray-400 text-sm">Your church hasn&apos;t published a bulletin yet.</p>
@@ -151,9 +151,9 @@ export default function DashboardPage() {
         {/* Notifications Banner */}
         {unreadCount > 0 && (
           <Link href="/notifications" className="block">
-            <Card className="bg-[#1E293B] border border-blue-800/50 shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
+            <Card className="bg-card border border-blue-800/50 shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
               <CardContent className="p-4 flex items-center gap-3">
-                <div className="bg-[#E2A619] text-black rounded-full h-8 w-8 flex items-center justify-center text-sm font-bold shrink-0">
+                <div className="bg-accent text-black rounded-full h-8 w-8 flex items-center justify-center text-sm font-bold shrink-0">
                   {unreadCount}
                 </div>
                 <p className="text-white text-sm">You have {unreadCount} unread notification{unreadCount > 1 ? "s" : ""}</p>
@@ -165,7 +165,7 @@ export default function DashboardPage() {
 
         {/* Verse of the Day */}
         {verseOfDay && (
-          <Card className="bg-[#1E293B] border-0 shadow-lg">
+          <Card className="bg-card border-0 shadow-lg">
             <CardContent className="p-5 sm:p-6">
               <p className="text-base font-medium italic text-gray-200">&ldquo;{verseOfDay}&rdquo;</p>
               {verseRef && <p className="text-sm text-gray-500 mt-2">&mdash; {verseRef}</p>}
@@ -193,7 +193,7 @@ export default function DashboardPage() {
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {myMinistries.map((m: any) => (
                 <Link key={m.id} href={`/ministries/${getMinistryRoute(m.type)}`} className="block">
-                  <Card className="bg-[#1E293B] border-0 shadow-lg hover:shadow-xl transition-shadow h-full">
+                  <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow h-full">
                     <CardContent className="p-4">
                       <p className="font-medium text-white text-sm">{m.name}</p>
                       <Badge className="mt-1 text-xs">{m.type.replace(/_/g, " ")}</Badge>
@@ -214,7 +214,7 @@ export default function DashboardPage() {
             </div>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {events.map(event => (
-                <Card key={event.id} className="bg-[#1E293B] border-0 shadow-lg">
+                <Card key={event.id} className="bg-card border-0 shadow-lg">
                   <CardContent className="p-4">
                     <p className="font-medium text-white text-sm">{event.title}</p>
                     <div className="flex items-center gap-2 mt-2 text-xs text-gray-400">
@@ -252,9 +252,9 @@ export default function DashboardPage() {
 function QuickAction({ href, icon: Icon, label }: { href: string; icon: any; label: string }) {
   return (
     <Link href={href} className="block">
-      <Card className="bg-[#1E293B] border-0 shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer">
+      <Card className="bg-card border-0 shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer">
         <CardContent className="p-3 sm:p-4 flex flex-col items-center gap-2 text-center">
-          <Icon className="h-6 w-6 sm:h-7 sm:w-7 text-[#E2A619]" />
+          <Icon className="h-6 w-6 sm:h-7 sm:w-7 text-accent" />
           <span className="text-xs sm:text-sm font-medium text-white">{label}</span>
         </CardContent>
       </Card>

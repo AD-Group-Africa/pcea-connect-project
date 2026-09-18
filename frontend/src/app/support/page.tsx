@@ -3,7 +3,7 @@ import Link from "next/link"
 
 export default function SupportPage() {
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#0a0f1e", color: "#e2e8f0", fontFamily: "system-ui, sans-serif" }}>
+    <div style={{ minHeight: "100vh", backgroundColor: "#0a0f1e", color: "#e2e8f0", fontFamily: "var(--font-jakarta), system-ui, sans-serif" }}>
       <div style={{ maxWidth: "800px", margin: "0 auto", padding: "3rem 1.5rem" }}>
         <h1 style={{ fontSize: "2rem", fontWeight: 700, color: "#fff", marginBottom: "0.5rem" }}>Support</h1>
         <p style={{ color: "#64748b", fontSize: "0.875rem", marginBottom: "2rem" }}>PCEA Connect — The Digital Church</p>
@@ -22,12 +22,12 @@ export default function SupportPage() {
 
         <div style={{ marginBottom: "2rem" }}>
           <h2 style={{ fontSize: "1.15rem", fontWeight: 600, color: "#fff", marginBottom: "0.5rem" }}>Privacy &amp; Data Requests</h2>
-          <p style={{ fontSize: "0.9rem", color: "#94a3b8", lineHeight: 1.6 }}>To exercise your data rights (access, correction, deletion), contact your church administrator or submit a request through your <Link href="/profile" style={{ color: "#60a5fa" }}>Profile settings</Link>.</p>
+          <p style={{ fontSize: "0.9rem", color: "#94a3b8", lineHeight: 1.6 }}>To exercise your data rights (access, correction, deletion), contact your church administrator.</p>
         </div>
 
         <div style={{ marginBottom: "2rem" }}>
           <h2 style={{ fontSize: "1.15rem", fontWeight: 600, color: "#fff", marginBottom: "0.5rem" }}>Security</h2>
-          <p style={{ fontSize: "0.9rem", color: "#94a3b8", lineHeight: 1.6 }}>If you believe your account has been compromised, change your password immediately from your <Link href="/profile" style={{ color: "#60a5fa" }}>Profile settings</Link> and contact your church administrator.</p>
+          <p style={{ fontSize: "0.9rem", color: "#94a3b8", lineHeight: 1.6 }}>If you believe your account has been compromised, request a password reset from your <Link href="/settings" style={{ color: "#60a5fa" }}>Account settings</Link> and contact your church administrator.</p>
         </div>
 
         <div style={{ marginBottom: "2rem" }}>

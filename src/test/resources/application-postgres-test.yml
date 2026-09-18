@@ -11,7 +11,7 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: false
-    locations: classpath:db/migration
+    locations: classpath:db/migration,classpath:db/migration-postgresql
 
 jwt:
   secret: postgres-test-secret-key-that-is-256-bits-long-1234

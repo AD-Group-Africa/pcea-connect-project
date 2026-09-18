@@ -44,7 +44,7 @@ export default function WorshipPage() {
 
       {/* TODAY'S WORSHIP */}
       {today ? (
-        <Card className="bg-gradient-to-r from-[#1A3C8F] to-[#0a0f1e] border border-blue-800 shadow-xl">
+        <Card className="bg-gradient-to-r from-primary to-background border border-blue-800 shadow-xl">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
@@ -88,7 +88,7 @@ export default function WorshipPage() {
           </CardContent>
         </Card>
       ) : (
-        <Card className="bg-[#1E293B] border-0 shadow-lg">
+        <Card className="bg-card border-0 shadow-lg">
           <CardContent className="p-6 text-center">
             <Church className="h-12 w-12 mx-auto mb-2 text-gray-600" />
             <p className="text-gray-400">No service scheduled for today.</p>
@@ -101,7 +101,7 @@ export default function WorshipPage() {
 
       {/* BULLETIN */}
       {bulletin && (
-        <Card className="bg-[#1E293B] border-0 shadow-lg">
+        <Card className="bg-card border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="text-xl text-white flex items-center gap-2">
               <BookOpen className="h-5 w-5 text-blue-400" /> {bulletin.title || "Weekly Bulletin"}
@@ -187,7 +187,7 @@ export default function WorshipPage() {
           <h2 className="text-xl font-semibold mb-3">Upcoming Services</h2>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {upcoming.map(s => (
-              <Card key={s.id} className="bg-[#1E293B] border-0 shadow-lg">
+              <Card key={s.id} className="bg-card border-0 shadow-lg">
                 <CardHeader>
                   <CardTitle className="text-lg text-white">{s.title || s.serviceType}</CardTitle>
                   <div className="flex items-center gap-1 text-sm text-gray-400">
@@ -206,7 +206,7 @@ export default function WorshipPage() {
       )}
 
       {!today && !bulletin && upcoming.length === 0 && (
-        <Card className="bg-[#1E293B] border-0 shadow-lg">
+        <Card className="bg-card border-0 shadow-lg">
           <CardContent className="p-8 text-center">
             <Church className="h-12 w-12 mx-auto mb-2 text-gray-600" />
             <p className="text-gray-400">No worship services or bulletins scheduled yet.</p>

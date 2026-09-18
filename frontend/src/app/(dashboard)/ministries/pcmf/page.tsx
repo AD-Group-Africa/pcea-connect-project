@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import api from "@/lib/api"
 import { getUserId } from "@/lib/auth"
-import { Users, Calendar, Briefcase, Heart, ArrowRight, Megaphone } from "lucide-react"
+import { Users, Calendar, Briefcase, Heart, ArrowRight, Megaphone, MapPin } from "lucide-react"
 import Link from "next/link"
 
 interface MinistryMember {
@@ -69,7 +69,7 @@ export default function PCMFPage() {
       </div>
 
       {!ministry ? (
-        <Card className="bg-[#1E293B] border-0 shadow-lg">
+        <Card className="bg-card border-0 shadow-lg">
           <CardContent className="p-8 text-center">
             <Users className="h-12 w-12 mx-auto mb-2 text-gray-600" />
             <p className="text-gray-400">PCMF ministry has not been set up for your congregation yet.</p>
@@ -117,7 +117,7 @@ export default function PCMFPage() {
               </h2>
               <div className="space-y-2">
                 {announcements.map(a => (
-                  <Card key={a.id} className="bg-[#1E293B] border-0 shadow-lg">
+                  <Card key={a.id} className="bg-card border-0 shadow-lg">
                     <CardContent className="p-4">
                       <div className="flex items-center gap-2 mb-1">
                         {a.pinned && <Badge style={{ background: maroon, color: "white" }}>Pinned</Badge>}
@@ -140,10 +140,10 @@ export default function PCMFPage() {
               </h2>
               <div className="grid gap-4 md:grid-cols-2">
                 {events.map(e => (
-                  <Card key={e.id} className="bg-[#1E293B] border-0 shadow-lg">
+                  <Card key={e.id} className="bg-card border-0 shadow-lg">
                     <CardHeader>
                       <CardTitle className="text-lg text-white">{e.title}</CardTitle>
-                      {e.location && <p className="text-sm text-gray-400 flex items-center gap-1">📍 {e.location}</p>}
+                      {e.location && <p className="flex items-center gap-1 text-sm text-gray-400"><MapPin className="h-3.5 w-3.5" aria-hidden="true" /> {e.location}</p>}
                     </CardHeader>
                     <CardContent>
                       {e.description && <p className="text-sm text-gray-400">{e.description}</p>}
@@ -165,7 +165,7 @@ export default function PCMFPage() {
               </h2>
               <div className="space-y-2">
                 {projects.map(p => (
-                  <Card key={p.id} className="bg-[#1E293B] border-0 shadow-lg">
+                  <Card key={p.id} className="bg-card border-0 shadow-lg">
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
                         <p className="font-medium text-white">{p.name}</p>
@@ -187,7 +187,7 @@ export default function PCMFPage() {
               </h2>
               <div className="grid gap-2 md:grid-cols-3">
                 {members.map(m => (
-                  <Card key={m.id} className="bg-[#1E293B] border-0 shadow-lg">
+                  <Card key={m.id} className="bg-card border-0 shadow-lg">
                     <CardContent className="p-3 flex items-center justify-between">
                       <span className="text-sm text-gray-300">{m.userId.substring(0, 8)}...</span>
                       <Badge style={m.role === "LEADER" ? { background: maroon, color: "white" } : {}}>
@@ -201,7 +201,7 @@ export default function PCMFPage() {
           )}
 
           {events.length === 0 && announcements.length === 0 && projects.length === 0 && members.length === 0 && (
-            <Card className="bg-[#1E293B] border-0 shadow-lg">
+            <Card className="bg-card border-0 shadow-lg">
               <CardContent className="p-8 text-center">
                 <Users className="h-12 w-12 mx-auto mb-2 text-gray-600" />
                 <p className="text-gray-400">No PCMF activities yet. Check back soon!</p>

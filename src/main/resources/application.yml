@@ -17,6 +17,10 @@ spring:
     enabled: true
     baseline-on-migrate: true
     baseline-version: 43
+    # Shared migrations run everywhere; db/migration-postgresql sits OUTSIDE the
+    # base location because Flyway scans recursively — Postgres-only SQL (PL/pgSQL)
+    # that H2-based profiles must never execute lives there.
+    locations: classpath:db/migration,classpath:db/migration-postgresql
 
 jwt:
   secret: ${JWT_SECRET}

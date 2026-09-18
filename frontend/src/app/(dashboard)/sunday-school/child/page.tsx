@@ -79,7 +79,7 @@ export default function SundaySchoolChildPage() {
         </div>
 
         {children.length === 0 ? (
-          <Card className="bg-[#1E293B] border-0 shadow-lg">
+          <Card className="bg-card border-0 shadow-lg">
             <CardContent className="p-8 text-center">
               <Sun className="h-12 w-12 mx-auto mb-2 text-gray-600" />
               <p className="text-gray-400">No children linked to your account yet.</p>
@@ -105,7 +105,7 @@ export default function SundaySchoolChildPage() {
                 </CardContent>
               </Card>
             ) : (
-              <Card className="bg-[#1E293B] border-0 shadow-lg">
+              <Card className="bg-card border-0 shadow-lg">
                 <CardContent className="p-8 text-center">
                   <BookOpen className="h-12 w-12 mx-auto mb-2 text-gray-600" />
                   <p className="text-gray-400">No lesson available yet.</p>
@@ -115,7 +115,7 @@ export default function SundaySchoolChildPage() {
             )}
 
             {/* My Progress */}
-            <Card className="bg-[#1E293B] border-0 shadow-lg">
+            <Card className="bg-card border-0 shadow-lg">
               <CardContent className="p-6">
                 <h3 className="text-lg font-semibold text-white flex items-center gap-2 mb-3">
                   <Award className="h-5 w-5" style={{ color: theme.accent }} /> My Progress
@@ -133,7 +133,7 @@ export default function SundaySchoolChildPage() {
                 <h3 className="text-lg font-semibold text-white mb-3">Activities</h3>
                 <div className="space-y-2">
                   {progress.map(p => (
-                    <Card key={p.id} className="bg-[#1E293B] border-0 shadow-lg">
+                    <Card key={p.id} className="bg-card border-0 shadow-lg">
                       <CardContent className="p-4 flex items-center gap-3">
                         <CheckCircle2 className="h-5 w-5" style={{ color: theme.accent }} />
                         <div>

@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
-import api from "@/lib/api"
+import { toast } from "sonner"
+import api, { apiErrorMessage } from "@/lib/api"
 import { getUserId } from "@/lib/auth"
 import { BookOpen, Bookmark, Highlighter, PenTool, Calendar, Heart, Share2, Play, Flame } from "lucide-react"
 
@@ -55,16 +56,26 @@ export default function BiblePage() {
       setPlans(plansRes.data.data || [])
       setDevotional(devotionalRes.data.data)
       setStreak(streakRes.data.data?.streak || 0)
-    }).catch(console.error)
+    }).catch(() => {})
     loadChapter(selectedBook, chapter)
   }, [])
 
   const loadChapter = async (bookId: string, ch: number) => {
+    if (!getUserId()) { setLoading(false); return }
     setLoading(true)
-    const res = await api.get(`/api/bible/verses/${bookId}/${ch}`)
-    setVerses(res.data.data || [])
-    setLoading(false)
-    if (userId) { api.post("/api/bible/reading-streak").then(r => setStreak(r.data.data?.streak || 0)) }
+    try {
+      const res = await api.get(`/api/bible/verses/${bookId}/${ch}`)
+      setVerses(res.data.data || [])
+    } catch {
+      setVerses([])
+    } finally {
+      setLoading(false)
+    }
+    if (getUserId()) {
+      api.post("/api/bible/reading-streak")
+        .then(r => setStreak(r.data.data?.streak || 0))
+        .catch(() => {})
+    }
   }
 
   const handleAddBookmark = async (verse: Verse) => {
@@ -105,23 +116,23 @@ export default function BiblePage() {
         </div>
       </div>
       <Tabs defaultValue="read" className="w-full">
-        <TabsList className="mb-4 bg-gray-800">
-          <TabsTrigger value="read" className="text-gray-300 data-[state=active]:text-white"><BookOpen className="h-4 w-4 mr-2" /> Read</TabsTrigger>
-          <TabsTrigger value="bookmarks" className="text-gray-300 data-[state=active]:text-white"><Bookmark className="h-4 w-4 mr-2" /> Bookmarks</TabsTrigger>
-          <TabsTrigger value="plans" className="text-gray-300 data-[state=active]:text-white"><Calendar className="h-4 w-4 mr-2" /> Plans</TabsTrigger>
-          <TabsTrigger value="devotional" className="text-gray-300 data-[state=active]:text-white"><Heart className="h-4 w-4 mr-2" /> Devotional</TabsTrigger>
+        <TabsList className="mb-4">
+          <TabsTrigger value="read"><BookOpen className="mr-2 h-4 w-4" /> Read</TabsTrigger>
+          <TabsTrigger value="bookmarks"><Bookmark className="mr-2 h-4 w-4" /> Bookmarks</TabsTrigger>
+          <TabsTrigger value="plans"><Calendar className="mr-2 h-4 w-4" /> Plans</TabsTrigger>
+          <TabsTrigger value="devotional"><Heart className="mr-2 h-4 w-4" /> Devotional</TabsTrigger>
         </TabsList>
         <TabsContent value="read">
           <div className="flex gap-4 mb-4 flex-wrap">
             <Select value={selectedBook} onValueChange={setSelectedBook}>
-              <SelectTrigger className="w-48 bg-gray-800 border-gray-700 text-white"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
               <SelectContent>{books.map(b => <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>)}</SelectContent>
             </Select>
-            <Input type="number" value={chapter} onChange={(e) => setChapter(parseInt(e.target.value) || 1)} className="w-24 bg-gray-800 border-gray-700 text-white" />
+            <Input type="number" value={chapter} onChange={(e) => setChapter(parseInt(e.target.value) || 1)} className="w-24" />
           </div>
           <div className="space-y-2">
             {loading ? <Skeleton className="h-64" /> : verses.map(v => (
-              <Card key={v.id} className="bg-[#1E293B] border-0 shadow-lg group">
+              <Card key={v.id} className="bg-card border-0 shadow-lg group">
                 <CardContent className="p-4 flex justify-between items-start">
                   <div className="flex-1">
                     <p className="text-sm font-semibold">{v.verse}. {v.text}</p>
@@ -142,17 +153,29 @@ export default function BiblePage() {
         </TabsContent>
         <TabsContent value="bookmarks">
           {bookmarks.length === 0 ? <p className="text-gray-400">No bookmarks yet.</p> : bookmarks.map(bm => (
-            <Card key={bm.id} className="bg-[#1E293B] border-0 shadow-lg mb-2"><CardContent className="p-4 text-white">{bm.label || `Book ${bm.bookId} ${bm.chapter}:${bm.verse}`}</CardContent></Card>
+            <Card key={bm.id} className="bg-card border-0 shadow-lg mb-2"><CardContent className="p-4 text-white">{bm.label || `Book ${bm.bookId} ${bm.chapter}:${bm.verse}`}</CardContent></Card>
           ))}
         </TabsContent>
         <TabsContent value="plans">
           <div className="space-y-4">
             {plans.map(p => (
-              <Card key={p.id} className="bg-[#1E293B] border-0 shadow-lg">
+              <Card key={p.id} className="bg-card border-0 shadow-lg">
                 <CardHeader><CardTitle className="text-white">{p.name}</CardTitle></CardHeader>
                 <CardContent>
                   <p className="text-sm text-gray-400">{p.description}</p>
-                  <Button className="mt-2 bg-blue-600 hover:bg-blue-700" onClick={async () => { await api.post(`/api/bible/plans/${p.id}/start`); const res = await api.get(`/api/bible/plans/${p.id}/progress`); setProgress(res.data.data) }}>Start / Continue</Button>
+                  <Button
+                    className="mt-2 bg-primary hover:bg-primary/90"
+                    onClick={async () => {
+                      try {
+                        await api.post(`/api/bible/plans/${p.id}/start`)
+                        const res = await api.get(`/api/bible/plans/${p.id}/progress`)
+                        setProgress(res.data.data)
+                        toast.success("Reading plan started")
+                      } catch (e) {
+                        toast.error(apiErrorMessage(e, "Could not start this reading plan"))
+                      }
+                    }}
+                  >Start / Continue</Button>
                   {progress && progress.planId === p.id && <p className="text-sm mt-2 text-gray-300">Day {progress.currentDay} of {p.days}</p>}
                 </CardContent>
               </Card>
@@ -161,7 +184,7 @@ export default function BiblePage() {
         </TabsContent>
         <TabsContent value="devotional">
           {devotional ? (
-            <Card className="bg-[#1E293B] border-0 shadow-lg">
+            <Card className="bg-card border-0 shadow-lg">
               <CardHeader><CardTitle className="text-white">{devotional.title}</CardTitle></CardHeader>
               <CardContent>
                 <p className="text-sm font-medium text-gray-300">{devotional.verseRef}</p>

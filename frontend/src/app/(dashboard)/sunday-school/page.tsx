@@ -52,7 +52,7 @@ export default function SundaySchoolHub() {
 
         {/* Role-based entry cards */}
         <div className="grid gap-4 md:grid-cols-3">
-          <Card className="bg-[#1E293B] border-0 shadow-lg hover:shadow-xl transition-shadow">
+          <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow">
             <CardContent className="p-6 text-center">
               <Sun className="h-12 w-12 mx-auto mb-3" style={{ color: theme.accent }} />
               <h3 className="text-lg font-semibold text-white">Child View</h3>
@@ -63,7 +63,7 @@ export default function SundaySchoolHub() {
             </CardContent>
           </Card>
 
-          <Card className="bg-[#1E293B] border-0 shadow-lg hover:shadow-xl transition-shadow">
+          <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow">
             <CardContent className="p-6 text-center">
               <Users className="h-12 w-12 mx-auto mb-3" style={{ color: theme.accent }} />
               <h3 className="text-lg font-semibold text-white">Parent View</h3>
@@ -75,7 +75,7 @@ export default function SundaySchoolHub() {
           </Card>
 
           {isTeacher && (
-            <Card className="bg-[#1E293B] border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardContent className="p-6 text-center">
                 <GraduationCap className="h-12 w-12 mx-auto mb-3" style={{ color: theme.accent }} />
                 <h3 className="text-lg font-semibold text-white">Teacher View</h3>
@@ -88,7 +88,7 @@ export default function SundaySchoolHub() {
           )}
 
           {isAdmin && (
-            <Card className="bg-[#1E293B] border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <Card className="bg-card border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardContent className="p-6 text-center">
                 <Shield className="h-12 w-12 mx-auto mb-3" style={{ color: theme.accent }} />
                 <h3 className="text-lg font-semibold text-white">Admin</h3>
