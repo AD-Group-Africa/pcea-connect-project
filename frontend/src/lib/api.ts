@@ -28,4 +28,21 @@ export function apiErrorMessage(error: unknown, fallback: string): string {
   return fallback
 }
 
+/**
+ * Pulls the machine-readable error code out of the API envelope
+ * (`ApiResponse.code`, e.g. DUPLICATE_RECORD) when the server provided one.
+ * Communion failure UX keys off this so business states never collapse into
+ * a generic message (spec §31 / STEP 12).
+ */
+export function apiErrorCode(error: unknown): string {
+  if (error && typeof error === "object") {
+    const response = (error as { response?: { data?: unknown } }).response
+    if (response && typeof response.data === "object" && response.data !== null) {
+      const code = (response.data as { code?: unknown }).code
+      if (typeof code === "string" && code.trim()) return code
+    }
+  }
+  return ""
+}
+
 export default api

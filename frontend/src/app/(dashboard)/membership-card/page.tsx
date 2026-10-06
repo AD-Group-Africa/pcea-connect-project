@@ -51,7 +51,7 @@ export default function MembershipCardPage() {
             <User className="h-10 w-10 text-blue-400" aria-hidden="true" />
           </div>
           <CardTitle className="text-2xl font-bold text-white">{card.fullName}</CardTitle>
-          <Badge variant="default" className="mx-auto">PCEA Member</Badge>
+          <Badge variant="default" className="mx-auto">PCEA Church ID</Badge>
         </CardHeader>
         <CardContent className="space-y-3">
           {card.congregationName && (
@@ -95,7 +95,7 @@ export default function MembershipCardPage() {
           </div>
           {!qrFailed && card.qrCode && (
             <p className="text-center text-xs text-muted-foreground">
-              Scan this QR code for verification
+              Your Church ID — present this QR for membership and communion verification
             </p>
           )}
         </CardContent>

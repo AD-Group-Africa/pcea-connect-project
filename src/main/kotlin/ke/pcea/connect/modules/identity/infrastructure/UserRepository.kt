@@ -5,4 +5,5 @@ import java.util.*
 interface UserRepository : JpaRepository<User, String> {
     fun findByEmail(email: String): Optional<User>
     fun countByCongregationId(congregationId: String): Long
+    fun findByCongregationId(congregationId: String): List<User>
 }

@@ -56,3 +56,15 @@ google:
 
 app:
   base-url: ${APP_BASE_URL:http://localhost:3000}
+  # Secure platform bootstrap: the ONLY email that receives SUPER_ADMIN on registration.
+  # When unset, no registration ever inherits SUPER_ADMIN (the first account is a plain
+  # MEMBER and an existing admin must grant roles). Leave unset in production until the
+  # designated administrator is ready to register, then remove it again.
+  bootstrap-admin-email: ${APP_BOOTSTRAP_ADMIN_EMAIL:}
+  # Membership credential signing: dedicated secret (falls back to jwt.secret when empty).
+  credential-secret: ${APP_CREDENTIAL_SECRET:}
+  credential-max-age-days: ${APP_CREDENTIAL_MAX_AGE_DAYS:1095}
+  cors:
+    # Extra allowed CORS origins (comma-separated), e.g. https://pcea-connect.com
+    # when the API is consumed cross-origin. Same-origin deployments leave unset.
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:}

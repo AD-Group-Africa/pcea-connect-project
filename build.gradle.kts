@@ -23,6 +23,9 @@ dependencies {
     // Hibernate ddl-auto are baselined at V043 (application.yml) and receive V044+; fresh
     // databases run the full V015+ chain (V016 self-creates users; V046 adds the remaining
     // pre-Flyway foundational tables idempotently).
+    // Self-hosted QR rendering for the membership credential (replaces third-party
+    // api.qrserver.com image generation; member ids must not leave our infrastructure).
+    implementation("com.google.zxing:core:3.5.3")
     implementation("org.flywaydb:flyway-core")
     runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
